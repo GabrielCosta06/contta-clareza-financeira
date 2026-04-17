@@ -4,19 +4,85 @@ import type {
   TransactionsRepo, CategoriesRepo, ReviewRepo, MarginRepo, CashRepo,
   AlertsRepo, AIRepo, CompanyRepo, AuthService
 } from "@/services/contracts";
-import type { AIMessage, User } from "@/domain/types";
+import type {
+  AIMessage, User, Transaction, ReviewItem, MarginView, CashView,
+  CashProjectionPoint, ReceivableExpectation, PayableObligation, FinancialAlert
+} from "@/domain/types";
 import {
   seedTransactions, seedCategories, seedReview, seedMargin, seedDRE,
   seedCosts, seedBudget, seedPricing, seedCash, seedCashProjection,
   seedReceivables, seedObligations, seedAlerts, seedConversations,
   seedCompany, seedAccounts, seedTax, seedPeriods, seedUser
 } from "./seed";
+import { getDemoScenario } from "@/hooks/useDemoScenario";
 
 const delay = <T,>(v: T, ms = 280) => new Promise<T>(r => setTimeout(() => r(v), ms));
 
+// ---- scenario shaping helpers ----
+const scenarioTransactions = (): Transaction[] => {
+  const s = getDemoScenario();
+  if (s === "empty") return [];
+  if (s === "partial") return seedTransactions.slice(0, 8);
+  return seedTransactions;
+};
+
+const scenarioReview = (): ReviewItem[] => {
+  const s = getDemoScenario();
+  if (s === "empty") return [];
+  if (s === "partial") return seedReview.filter(r => r.severity !== "critical").slice(0, 2);
+  if (s === "critical") return seedReview;
+  return seedReview;
+};
+
+const scenarioMargin = (): MarginView | null => {
+  const s = getDemoScenario();
+  if (s === "empty") return null;
+  if (s === "partial") return { ...seedMargin, confidence: "partial" };
+  if (s === "critical") return { ...seedMargin, confidence: "with-caveats", delta: { value: -14200, pct: -9.8, vs: "vs mês anterior" } };
+  return { ...seedMargin, confidence: "reliable" };
+};
+
+const scenarioCash = (): CashView | null => {
+  const s = getDemoScenario();
+  if (s === "empty") return null;
+  if (s === "partial") return { ...seedCash, confidence: "partial" };
+  if (s === "critical") return { ...seedCash, riskLevel: "critical", projected30d: -8200, confidence: "with-caveats" };
+  return { ...seedCash, riskLevel: "ok", projected30d: 42000, confidence: "reliable" };
+};
+
+const scenarioProjection = (): CashProjectionPoint[] => {
+  const s = getDemoScenario();
+  if (s === "empty") return [];
+  if (s === "critical") return seedCashProjection.map((p, i) => ({ ...p, balance: p.balance - i * 600 }));
+  if (s === "reliable") return seedCashProjection.map((p, i) => ({ ...p, balance: p.balance + i * 800 }));
+  return seedCashProjection;
+};
+
+const scenarioReceivables = (): ReceivableExpectation[] => {
+  const s = getDemoScenario();
+  if (s === "empty") return [];
+  if (s === "partial") return seedReceivables.slice(0, 2);
+  return seedReceivables;
+};
+
+const scenarioObligations = (): PayableObligation[] => {
+  const s = getDemoScenario();
+  if (s === "empty") return [];
+  if (s === "partial") return seedObligations.slice(0, 2);
+  return seedObligations;
+};
+
+const scenarioAlerts = (): FinancialAlert[] => {
+  const s = getDemoScenario();
+  if (s === "empty") return [];
+  if (s === "reliable") return seedAlerts.filter(a => a.severity === "info");
+  if (s === "partial") return seedAlerts.filter(a => a.severity !== "critical");
+  return seedAlerts;
+};
+
 export const transactionsRepo: TransactionsRepo = {
   async list(query) {
-    let data = [...seedTransactions];
+    let data = [...scenarioTransactions()];
     if (query?.search) {
       const q = query.search.toLowerCase();
       data = data.filter(t =>
@@ -59,7 +125,7 @@ export const categoriesRepo: CategoriesRepo = {
 };
 
 export const reviewRepo: ReviewRepo = {
-  async queue() { return delay(seedReview); },
+  async queue() { return delay(scenarioReview()); },
   async resolve(id) {
     const i = seedReview.findIndex(r => r.id === id);
     if (i >= 0) seedReview.splice(i, 1);
@@ -68,26 +134,34 @@ export const reviewRepo: ReviewRepo = {
 };
 
 export const marginRepo: MarginRepo = {
-  async overview() { return delay(seedMargin); },
+  async overview() {
+    const m = scenarioMargin();
+    if (!m) throw new Error("EMPTY_MARGIN");
+    return delay(m);
+  },
   async dre() { return delay(seedDRE); },
-  async costs() { return delay(seedCosts); },
-  async budget() { return delay(seedBudget); },
-  async pricing() { return delay(seedPricing); },
+  async costs() { return delay(getDemoScenario() === "empty" ? [] : seedCosts); },
+  async budget() { return delay(getDemoScenario() === "empty" ? [] : seedBudget); },
+  async pricing() { return delay(getDemoScenario() === "empty" ? [] : seedPricing); },
 };
 
 export const cashRepo: CashRepo = {
-  async overview() { return delay(seedCash); },
-  async projection() { return delay(seedCashProjection); },
-  async receivables() { return delay(seedReceivables); },
-  async obligations() { return delay(seedObligations); },
+  async overview() {
+    const c = scenarioCash();
+    if (!c) throw new Error("EMPTY_CASH");
+    return delay(c);
+  },
+  async projection() { return delay(scenarioProjection()); },
+  async receivables() { return delay(scenarioReceivables()); },
+  async obligations() { return delay(scenarioObligations()); },
 };
 
 export const alertsRepo: AlertsRepo = {
-  async list() { return delay(seedAlerts); },
+  async list() { return delay(scenarioAlerts()); },
 };
 
 export const aiRepo: AIRepo = {
-  async conversations() { return delay(seedConversations); },
+  async conversations() { return delay(getDemoScenario() === "empty" ? [] : seedConversations); },
   async ask(prompt) {
     const msg: AIMessage = {
       id: crypto.randomUUID(),
