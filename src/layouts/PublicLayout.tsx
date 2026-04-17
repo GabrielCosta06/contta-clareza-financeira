@@ -1,6 +1,9 @@
 import { Link, NavLink, Outlet } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
+import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetHeader, SheetDescription, SheetClose } from "@/components/ui/sheet";
+import { Menu } from "lucide-react";
+import { useState } from "react";
 
 const nav = [
   { to: "/produto", label: "Produto" },
@@ -11,10 +14,11 @@ const nav = [
 
 export const PublicLayout = () => {
   const { user } = useAuth();
+  const [open, setOpen] = useState(false);
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur-md">
-        <div className="container flex h-16 items-center justify-between gap-8">
+        <div className="container flex h-16 items-center justify-between gap-4 md:gap-8">
           <Link to="/" className="flex items-center gap-2 group">
             <div className="grid h-8 w-8 place-items-center rounded-md bg-gradient-hero text-primary-foreground font-display text-lg leading-none">c</div>
             <span className="font-semibold text-foreground tracking-tight">Contta</span>
@@ -31,10 +35,49 @@ export const PublicLayout = () => {
               <Button asChild size="sm"><Link to="/app">Abrir Contta</Link></Button>
             ) : (
               <>
-                <Button asChild variant="ghost" size="sm"><Link to="/login">Entrar</Link></Button>
-                <Button asChild size="sm"><Link to="/cadastro">Criar conta</Link></Button>
+                <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex"><Link to="/login">Entrar</Link></Button>
+                <Button asChild size="sm" className="hidden sm:inline-flex"><Link to="/cadastro">Criar conta</Link></Button>
               </>
             )}
+            {/* Mobile menu */}
+            <Sheet open={open} onOpenChange={setOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="md:hidden" aria-label="Abrir menu">
+                  <Menu className="h-5 w-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-72">
+                <SheetHeader>
+                  <SheetTitle>Menu</SheetTitle>
+                  <SheetDescription className="sr-only">Navegação do site</SheetDescription>
+                </SheetHeader>
+                <nav className="mt-6 flex flex-col gap-1">
+                  {nav.map(item => (
+                    <SheetClose asChild key={item.to}>
+                      <NavLink to={item.to} className={({ isActive }) => `rounded-md px-3 py-2.5 text-sm font-medium ${isActive ? "bg-muted text-foreground" : "text-muted-foreground hover:bg-muted/60 hover:text-foreground"}`}>
+                        {item.label}
+                      </NavLink>
+                    </SheetClose>
+                  ))}
+                </nav>
+                <div className="mt-6 pt-6 border-t flex flex-col gap-2">
+                  {user ? (
+                    <SheetClose asChild>
+                      <Button asChild><Link to="/app">Abrir Contta</Link></Button>
+                    </SheetClose>
+                  ) : (
+                    <>
+                      <SheetClose asChild>
+                        <Button asChild variant="outline"><Link to="/login">Entrar</Link></Button>
+                      </SheetClose>
+                      <SheetClose asChild>
+                        <Button asChild><Link to="/cadastro">Criar conta</Link></Button>
+                      </SheetClose>
+                    </>
+                  )}
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
       </header>
