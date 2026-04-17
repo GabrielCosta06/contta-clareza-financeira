@@ -46,13 +46,16 @@ export default function Dashboard() {
       )}
 
       {/* Top stats */}
+      {statsLoading ? (
+        <StatCardSkeletonGrid count={3} withFooter />
+      ) : (
       <div className="grid gap-4 lg:grid-cols-3">
         <StatCard
           label="Margem bruta — mês atual"
-          value={pct(margin?.grossMarginPct ?? 0)}
+          value={margin ? pct(margin.grossMarginPct) : "—"}
           delta={margin ? { value: margin.delta.pct } : undefined}
-          hint={margin ? `${brl(margin.grossMargin)} sobre ${brl(margin.revenue)}` : "—"}
-          emphasis="warning"
+          hint={margin ? `${brl(margin.grossMargin)} sobre ${brl(margin.revenue)}` : "Sem dados de margem ainda"}
+          emphasis={margin ? "warning" : "default"}
           footer={
             <div className="flex items-center justify-between">
               {margin && <ConfidenceBadge level={margin.confidence} />}
@@ -63,7 +66,7 @@ export default function Dashboard() {
         <StatCard
           label="Caixa atual"
           value={cash ? brl(cash.currentBalance, { compact: true }) : "—"}
-          hint={cash ? `Mínimo projetado: ${brl(cash.minProjected.balance)} em ${new Date(cash.minProjected.date).toLocaleDateString("pt-BR")}` : ""}
+          hint={cash ? `Mínimo projetado: ${brl(cash.minProjected.balance)} em ${new Date(cash.minProjected.date).toLocaleDateString("pt-BR")}` : "Sem dados de caixa ainda"}
           emphasis={cash?.riskLevel === "tight" || cash?.riskLevel === "critical" ? "destructive" : "default"}
           footer={
             <div className="flex items-center justify-between">
@@ -82,6 +85,7 @@ export default function Dashboard() {
           }
         />
       </div>
+      )}
 
       <div className="grid gap-4 lg:grid-cols-3">
         {/* Cash projection chart */}
@@ -93,6 +97,13 @@ export default function Dashboard() {
             </div>
             {cash && <ConfidenceBadge level={cash.confidence} />}
           </div>
+          {projLoading ? (
+            <ChartSkeleton height="h-56" />
+          ) : projection.length === 0 ? (
+            <div className="h-64 grid place-items-center text-sm text-muted-foreground text-center px-4">
+              Importe transações ou conecte uma conta para gerar a projeção.
+            </div>
+          ) : (
           <div className="h-64 -ml-2">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={projection.map(p => ({ ...p, date: new Date(p.date).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }) }))}>
@@ -110,6 +121,7 @@ export default function Dashboard() {
               </AreaChart>
             </ResponsiveContainer>
           </div>
+          )}
         </div>
 
         <AIInsightCard
