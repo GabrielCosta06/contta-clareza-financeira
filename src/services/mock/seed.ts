@@ -55,20 +55,22 @@ const daysAgo = (n: number) => {
   return d.toISOString();
 };
 
-const t = (over: Partial<Transaction>): Transaction => ({
-  id: crypto.randomUUID(),
-  companyId: "c_1",
-  date: daysAgo(over.date ? Number(over.date) : 1),
-  description: "—",
-  amount: 0,
-  direction: "out",
-  accountId: "acc_itau",
-  source: "bank",
-  reviewStatus: "reviewed",
-  evidenceCount: 1,
-  ...over,
-  date: typeof over.date === "string" ? over.date : daysAgo((over as any).date ?? 1),
-});
+const t = (over: Partial<Transaction>): Transaction => {
+  const { date, ...rest } = over;
+  return {
+    id: crypto.randomUUID(),
+    companyId: "c_1",
+    date: typeof date === "string" ? date : daysAgo(1),
+    description: "—",
+    amount: 0,
+    direction: "out",
+    accountId: "acc_itau",
+    source: "bank",
+    reviewStatus: "reviewed",
+    evidenceCount: 1,
+    ...rest,
+  };
+};
 
 export const seedTransactions: Transaction[] = [
   t({ date: daysAgo(0), description: "Stone — repasse vendas", counterparty: "Stone", amount: 4820.40, direction: "in", categoryId: "cat_rev_balcao", accountId: "acc_itau", source: "bank" }),
