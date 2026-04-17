@@ -9,15 +9,18 @@ import { brl, pct } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, AlertTriangle, ShieldCheck, TrendingUp, Wallet, Sparkles, Receipt } from "lucide-react";
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis, CartesianGrid } from "recharts";
+import { StatCardSkeletonGrid } from "@/components/skeletons/StatCardSkeleton";
+import { ChartSkeleton } from "@/components/skeletons/ChartSkeleton";
 
 export default function Dashboard() {
-  const { data: margin } = useQuery({ queryKey: ["margin"], queryFn: () => marginRepo.overview() });
-  const { data: cash } = useQuery({ queryKey: ["cash"], queryFn: () => cashRepo.overview() });
-  const { data: projection = [] } = useQuery({ queryKey: ["projection"], queryFn: () => cashRepo.projection() });
+  const { data: margin, isLoading: marginLoading } = useQuery({ queryKey: ["margin"], queryFn: () => marginRepo.overview(), retry: false });
+  const { data: cash, isLoading: cashLoading } = useQuery({ queryKey: ["cash"], queryFn: () => cashRepo.overview(), retry: false });
+  const { data: projection = [], isLoading: projLoading } = useQuery({ queryKey: ["projection"], queryFn: () => cashRepo.projection() });
   const { data: review = [] } = useQuery({ queryKey: ["review"], queryFn: () => reviewRepo.queue() });
   const { data: alerts = [] } = useQuery({ queryKey: ["alerts"], queryFn: () => alertsRepo.list() });
 
   const critical = review.filter(r => r.severity === "critical");
+  const statsLoading = marginLoading || cashLoading;
 
   return (
     <div className="space-y-6 animate-fade-in">
