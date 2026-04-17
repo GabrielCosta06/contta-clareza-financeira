@@ -94,24 +94,82 @@
   }
 
   .dark {
-    --background: 220 25% 8%;
-    --foreground: 40 30% 96%;
-    --card: 220 25% 11%;
-    --card-foreground: 40 30% 96%;
-    --popover: 220 25% 11%;
-    --popover-foreground: 40 30% 96%;
+    /* Surfaces — layered neutrals with a hint of teal warmth */
+    --background: 200 20% 7%;
+    --foreground: 40 25% 94%;
+
+    --card: 200 18% 10%;
+    --card-foreground: 40 25% 94%;
+
+    --popover: 200 18% 11%;
+    --popover-foreground: 40 25% 94%;
+
+    /* Brand: brighter teal that holds up on dark */
     --primary: 168 55% 55%;
-    --primary-foreground: 220 25% 8%;
-    --primary-soft: 168 30% 18%;
-    --secondary: 220 20% 16%;
-    --secondary-foreground: 40 30% 96%;
-    --muted: 220 20% 16%;
-    --muted-foreground: 220 10% 65%;
-    --accent: 38 80% 60%;
-    --accent-foreground: 220 25% 8%;
-    --border: 220 20% 18%;
-    --input: 220 20% 18%;
+    --primary-foreground: 200 30% 8%;
+    --primary-soft: 168 35% 16%;
+
+    --secondary: 200 15% 14%;
+    --secondary-foreground: 40 25% 94%;
+
+    --muted: 200 15% 14%;
+    --muted-foreground: 215 12% 68%;
+
+    --accent: 38 85% 62%;
+    --accent-foreground: 200 30% 8%;
+
+    /* Semantic */
+    --success: 158 55% 50%;
+    --success-foreground: 200 30% 8%;
+    --success-soft: 158 40% 16%;
+
+    --warning: 35 85% 58%;
+    --warning-foreground: 200 30% 8%;
+    --warning-soft: 35 50% 16%;
+
+    --destructive: 358 70% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --destructive-soft: 358 50% 18%;
+
+    --info: 215 70% 62%;
+    --info-soft: 215 40% 18%;
+
+    --border: 200 15% 18%;
+    --input: 200 15% 18%;
     --ring: 168 55% 55%;
+
+    /* Confidence scale — tuned for dark */
+    --conf-none: 215 8% 50%;
+    --conf-low: 358 70% 60%;
+    --conf-partial: 35 85% 58%;
+    --conf-caveat: 45 80% 55%;
+    --conf-good: 158 55% 50%;
+
+    /* Chart palette — brighter, still cohesive */
+    --chart-1: 168 55% 55%;
+    --chart-2: 215 70% 62%;
+    --chart-3: 38 85% 60%;
+    --chart-4: 280 50% 65%;
+    --chart-5: 358 65% 62%;
+
+    /* Sidebar — slightly deeper than card, distinct from background */
+    --sidebar-background: 200 25% 5%;
+    --sidebar-foreground: 168 12% 82%;
+    --sidebar-primary: 38 85% 62%;
+    --sidebar-primary-foreground: 200 30% 8%;
+    --sidebar-accent: 200 20% 13%;
+    --sidebar-accent-foreground: 40 25% 96%;
+    --sidebar-border: 200 18% 14%;
+    --sidebar-ring: 38 85% 62%;
+
+    /* Gradients & shadows tuned for dark */
+    --gradient-hero: linear-gradient(135deg, hsl(168 50% 18%) 0%, hsl(200 30% 10%) 100%);
+    --gradient-soft: linear-gradient(180deg, hsl(200 20% 7%) 0%, hsl(200 22% 10%) 100%);
+    --gradient-accent: linear-gradient(90deg, hsl(38 85% 62%), hsl(35 80% 55%));
+
+    --shadow-sm: 0 1px 2px hsl(0 0% 0% / 0.4);
+    --shadow-md: 0 4px 12px -2px hsl(0 0% 0% / 0.45), 0 2px 4px hsl(0 0% 0% / 0.3);
+    --shadow-lg: 0 24px 48px -12px hsl(0 0% 0% / 0.6);
   }
 }
 
