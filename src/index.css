@@ -135,3 +135,10 @@
   .text-balance { text-wrap: balance; }
   .num { font-variant-numeric: tabular-nums; }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in,
+  .animate-fade-in-slow {
+    animation: none !important;
+  }
+}

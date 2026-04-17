@@ -19,10 +19,18 @@ import { getDemoScenario } from "@/hooks/useDemoScenario";
 const delay = <T,>(v: T, ms = 280) => new Promise<T>(r => setTimeout(() => r(v), ms));
 
 // ---- scenario shaping helpers ----
+const reviewedTransaction = (transaction: Transaction): Transaction => ({
+  ...transaction,
+  categoryId: transaction.categoryId ?? (transaction.direction === "in" ? "cat_rev_balcao" : "cat_fin_taxas"),
+  reviewStatus: "reviewed",
+  evidenceCount: Math.max(1, transaction.evidenceCount),
+});
+
 const scenarioTransactions = (): Transaction[] => {
   const s = getDemoScenario();
   if (s === "empty") return [];
   if (s === "partial") return seedTransactions.slice(0, 8);
+  if (s === "reliable") return seedTransactions.map(reviewedTransaction);
   return seedTransactions;
 };
 
@@ -30,6 +38,7 @@ const scenarioReview = (): ReviewItem[] => {
   const s = getDemoScenario();
   if (s === "empty") return [];
   if (s === "partial") return seedReview.filter(r => r.severity !== "critical").slice(0, 2);
+  if (s === "reliable") return seedReview.filter(r => r.severity === "low").slice(0, 1);
   if (s === "critical") return seedReview;
   return seedReview;
 };
@@ -69,6 +78,7 @@ const scenarioObligations = (): PayableObligation[] => {
   const s = getDemoScenario();
   if (s === "empty") return [];
   if (s === "partial") return seedObligations.slice(0, 2);
+  if (s === "reliable") return seedObligations.map(o => ({ ...o, severity: o.severity === "critical" ? "high" : "normal" }));
   return seedObligations;
 };
 
@@ -78,6 +88,50 @@ const scenarioAlerts = (): FinancialAlert[] => {
   if (s === "reliable") return seedAlerts.filter(a => a.severity === "info");
   if (s === "partial") return seedAlerts.filter(a => a.severity !== "critical");
   return seedAlerts;
+};
+
+const scenarioAccounts = (): typeof seedAccounts => {
+  const s = getDemoScenario();
+  if (s === "empty") {
+    return seedAccounts.map((account, index) => ({
+      ...account,
+      status: index === 0 ? "pending" : "disconnected",
+      lastSyncAt: undefined,
+      balance: undefined,
+    }));
+  }
+
+  if (s === "partial") {
+    return seedAccounts.map((account, index) => ({
+      ...account,
+      status: index === 2 ? "pending" : account.status,
+      lastSyncAt:
+        index === 0
+          ? new Date(Date.now() - 1000 * 60 * 60 * 36).toISOString()
+          : index === 1
+            ? new Date(Date.now() - 1000 * 60 * 60 * 24 * 4).toISOString()
+            : account.lastSyncAt,
+    }));
+  }
+
+  if (s === "critical") {
+    return seedAccounts.map((account, index) => ({
+      ...account,
+      status: index === 1 ? "error" : account.status,
+      lastSyncAt:
+        index === 0
+          ? new Date(Date.now() - 1000 * 60 * 60 * 24 * 3).toISOString()
+          : index === 1
+            ? new Date(Date.now() - 1000 * 60 * 60 * 24 * 6).toISOString()
+            : account.lastSyncAt,
+    }));
+  }
+
+  return seedAccounts.map((account, index) => ({
+    ...account,
+    status: "connected",
+    lastSyncAt: new Date(Date.now() - 1000 * 60 * (index + 1) * 45).toISOString(),
+  }));
 };
 
 export const transactionsRepo: TransactionsRepo = {
@@ -194,7 +248,7 @@ export const aiRepo: AIRepo = {
 
 export const companyRepo: CompanyRepo = {
   async current() { return delay(seedCompany); },
-  async accounts() { return delay(seedAccounts); },
+  async accounts() { return delay(scenarioAccounts()); },
   async taxContext() { return delay(seedTax); },
   async periods() { return delay(seedPeriods); },
 };

@@ -1,3 +1,4 @@
+import type { ComponentProps } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -12,9 +13,12 @@ import { Search, Upload, Plus, ArrowUpRight, ArrowDownLeft, Receipt } from "luci
 import { EmptyState } from "@/components/EmptyState";
 import { DataTable, type DataTableColumn } from "@/components/DataTable";
 import { TableSkeleton } from "@/components/skeletons/TableSkeleton";
+import { useDemoScenario } from "@/hooks/useDemoScenario";
 import type { Transaction } from "@/domain/types";
 
-const statusLabels: Record<string, { label: string; variant: any }> = {
+type BadgeVariant = ComponentProps<typeof Badge>["variant"];
+
+const statusLabels: Record<string, { label: string; variant: BadgeVariant }> = {
   reviewed: { label: "Revisado", variant: "outline" },
   pending: { label: "Pendente", variant: "secondary" },
   "needs-categorization": { label: "Sem categoria", variant: "destructive" },
@@ -22,6 +26,7 @@ const statusLabels: Record<string, { label: string; variant: any }> = {
 };
 
 export default function Transacoes() {
+  const { setScenario } = useDemoScenario();
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("all");
   const [cat, setCat] = useState("all");
@@ -134,6 +139,11 @@ export default function Transacoes() {
               title="Nada por aqui ainda"
               description="Quando você importar ou conectar dados, as transações aparecem aqui categorizadas e prontas para a leitura."
               action={<Button size="sm"><Upload className="h-4 w-4" /> Importar agora</Button>}
+              secondaryAction={
+                <Button type="button" variant="outline" size="sm" onClick={() => setScenario("reliable")}>
+                  Ver dados de exemplo
+                </Button>
+              }
             />
           }
         />

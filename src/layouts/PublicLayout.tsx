@@ -4,6 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetHeader, SheetDescription, SheetClose } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
 import { useState } from "react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const nav = [
   { to: "/produto", label: "Produto" },
@@ -31,6 +32,7 @@ export const PublicLayout = () => {
             ))}
           </nav>
           <div className="flex items-center gap-2">
+            <ThemeToggle />
             {user ? (
               <Button asChild size="sm"><Link to="/app">Abrir Contta</Link></Button>
             ) : (

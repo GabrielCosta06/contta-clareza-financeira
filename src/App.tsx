@@ -3,6 +3,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import { AuthProvider } from "@/hooks/useAuth";
 import { DemoScenarioProvider } from "@/hooks/useDemoScenario";
 import { RequireAuth } from "@/components/RequireAuth";
@@ -30,19 +31,21 @@ import { DRE, Custos, Orcamento, Precificacao } from "@/pages/app/MargemSubpages
 import Caixa, { CaixaLayout, Projecao, Recebiveis, Obrigacoes } from "@/pages/app/Caixa";
 import ContaAIApp from "@/pages/app/ContaAI";
 import Configuracoes from "@/pages/app/Configuracoes";
+import WeeklyReadingExport from "@/pages/app/WeeklyReadingExport";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({ defaultOptions: { queries: { staleTime: 30_000, refetchOnWindowFocus: false } } });
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <AuthProvider>
-          <DemoScenarioProvider>
-          <Routes>
+    <ThemeProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <AuthProvider>
+            <DemoScenarioProvider>
+            <Routes>
             {/* Public */}
             <Route element={<PublicLayout />}>
               <Route path="/" element={<Home />} />
@@ -60,6 +63,7 @@ const App = () => (
             {/* App (auth) */}
             <Route element={<RequireAuth />}>
               <Route path="/app/onboarding" element={<Onboarding />} />
+              <Route path="/app/compartilhar" element={<WeeklyReadingExport />} />
               <Route path="/app" element={<AppLayout />}>
                 <Route index element={<Navigate to="/app/dashboard" replace />} />
                 <Route path="dashboard" element={<Dashboard />} />
@@ -85,11 +89,12 @@ const App = () => (
             </Route>
 
             <Route path="*" element={<NotFound />} />
-          </Routes>
-          </DemoScenarioProvider>
-        </AuthProvider>
-      </BrowserRouter>
-    </TooltipProvider>
+            </Routes>
+            </DemoScenarioProvider>
+          </AuthProvider>
+        </BrowserRouter>
+      </TooltipProvider>
+    </ThemeProvider>
   </QueryClientProvider>
 );
 
