@@ -445,7 +445,7 @@ export default function Onboarding() {
                   <ChevronLeft className="h-4 w-4" />
                   Voltar
                 </Button>
-                <Button onClick={finish}>
+                <Button onClick={() => finish()}>
                   Abrir minha visão geral
                   <ArrowRight className="h-4 w-4" />
                 </Button>
