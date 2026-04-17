@@ -6,8 +6,12 @@ import { StatCard } from "@/components/StatCard";
 import { ConfidenceBadge } from "@/components/ConfidenceBadge";
 import { AIInsightCard } from "@/components/AIInsightCard";
 import { brl, pct } from "@/lib/format";
-import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis, CartesianGrid, Line, LineChart } from "recharts";
+import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis, CartesianGrid } from "recharts";
 import { Button } from "@/components/ui/button";
+import { StatCardSkeletonGrid } from "@/components/skeletons/StatCardSkeleton";
+import { ChartSkeleton } from "@/components/skeletons/ChartSkeleton";
+import { EmptyState } from "@/components/EmptyState";
+import { TrendingUp } from "lucide-react";
 
 const subnav = [
   { to: "/app/margem", label: "Visão geral", end: true },
@@ -22,7 +26,7 @@ export const MargemLayout = () => {
   return (
     <div className="space-y-6 animate-fade-in">
       <PageHeader title="Margem" subtitle="Onde a profitabilidade está sendo formada — e onde está sendo erodida." />
-      <nav className="flex gap-1 border-b border-border -mb-px overflow-x-auto">
+      <nav className="flex gap-1 border-b border-border -mb-px overflow-x-auto" aria-label="Subseções de Margem">
         {subnav.map(s => {
           const active = s.end ? loc.pathname === s.to : loc.pathname.startsWith(s.to);
           return (
@@ -36,8 +40,30 @@ export const MargemLayout = () => {
 };
 
 export default function Margem() {
-  const { data: m } = useQuery({ queryKey: ["margin"], queryFn: () => marginRepo.overview() });
-  if (!m) return null;
+  const { data: m, isLoading, isError } = useQuery({ queryKey: ["margin"], queryFn: () => marginRepo.overview(), retry: false });
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <StatCardSkeletonGrid count={3} />
+        <div className="grid lg:grid-cols-3 gap-4">
+          <div className="lg:col-span-2"><ChartSkeleton /></div>
+          <ChartSkeleton height="h-48" />
+        </div>
+      </div>
+    );
+  }
+  if (isError || !m) {
+    return (
+      <EmptyState
+        icon={<TrendingUp className="h-5 w-5" />}
+        title="Sem dados de margem ainda"
+        description="Importe transações ou conecte uma conta para começar a calcular margem bruta e drivers de variação."
+        action={<Button size="sm" asChild><Link to="/app/transacoes">Importar transações</Link></Button>}
+      />
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div className="grid gap-4 md:grid-cols-3">

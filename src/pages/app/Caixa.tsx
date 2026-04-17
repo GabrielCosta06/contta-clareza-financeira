@@ -9,6 +9,13 @@ import { brl, dateBR } from "@/lib/format";
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis, CartesianGrid, ReferenceLine } from "recharts";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { StatCardSkeletonGrid } from "@/components/skeletons/StatCardSkeleton";
+import { ChartSkeleton } from "@/components/skeletons/ChartSkeleton";
+import { TableSkeleton } from "@/components/skeletons/TableSkeleton";
+import { DataTable, type DataTableColumn } from "@/components/DataTable";
+import { EmptyState } from "@/components/EmptyState";
+import { Wallet } from "lucide-react";
+import type { ReceivableExpectation, PayableObligation } from "@/domain/types";
 
 const subnav = [
   { to: "/app/caixa", label: "Visão geral", end: true },
@@ -22,7 +29,7 @@ export const CaixaLayout = () => {
   return (
     <div className="space-y-6 animate-fade-in">
       <PageHeader title="Caixa" subtitle="Saldo, projeção, recebíveis e obrigações em uma única leitura." />
-      <nav className="flex gap-1 border-b border-border overflow-x-auto">
+      <nav className="flex gap-1 border-b border-border overflow-x-auto" aria-label="Subseções de Caixa">
         {subnav.map(s => {
           const active = s.end ? loc.pathname === s.to : loc.pathname.startsWith(s.to);
           return (<Link key={s.to} to={s.to} className={`px-4 py-2.5 text-sm font-medium border-b-2 -mb-px transition-colors whitespace-nowrap ${active ? "border-primary text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"}`}>{s.label}</Link>);
@@ -36,8 +43,30 @@ export const CaixaLayout = () => {
 const riskLabels = { ok: { label: "Saudável", variant: "outline" }, watch: { label: "Em observação", variant: "secondary" }, tight: { label: "Aperto previsto", variant: "destructive" }, critical: { label: "Crítico", variant: "destructive" } } as const;
 
 export default function Caixa() {
-  const { data: c } = useQuery({ queryKey: ["cash"], queryFn: () => cashRepo.overview() });
-  if (!c) return null;
+  const { data: c, isLoading, isError } = useQuery({ queryKey: ["cash"], queryFn: () => cashRepo.overview(), retry: false });
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <StatCardSkeletonGrid count={3} />
+        <div className="grid lg:grid-cols-3 gap-4">
+          <div className="lg:col-span-2"><ChartSkeleton /></div>
+          <ChartSkeleton height="h-48" />
+        </div>
+      </div>
+    );
+  }
+  if (isError || !c) {
+    return (
+      <EmptyState
+        icon={<Wallet className="h-5 w-5" />}
+        title="Sem dados de caixa ainda"
+        description="Conecte uma conta bancária ou importe um extrato para começar a ver a projeção de caixa."
+        action={<Button size="sm" asChild><Link to="/app/configuracoes">Conectar conta</Link></Button>}
+      />
+    );
+  }
+
   const r = riskLabels[c.riskLevel];
   return (
     <div className="space-y-6">
@@ -76,7 +105,16 @@ export default function Caixa() {
 }
 
 export function ProjectionChart() {
-  const { data = [] } = useQuery({ queryKey: ["projection"], queryFn: () => cashRepo.projection() });
+  const { data = [], isLoading } = useQuery({ queryKey: ["projection"], queryFn: () => cashRepo.projection() });
+  if (isLoading) return <div className="h-72"><ChartSkeleton height="h-60" /></div>;
+  if (data.length === 0) {
+    return (
+      <EmptyState
+        title="Sem dados para projeção"
+        description="Importe transações ou conecte uma conta bancária para gerar a projeção de 30 dias."
+      />
+    );
+  }
   const formatted = data.map(p => ({ ...p, date: new Date(p.date).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }) }));
   return (
     <div className="h-72 -ml-2">
@@ -108,39 +146,41 @@ export function Projecao() {
 }
 
 export function Recebiveis() {
-  const { data = [] } = useQuery({ queryKey: ["receivables"], queryFn: () => cashRepo.receivables() });
+  const { data = [], isLoading } = useQuery({ queryKey: ["receivables"], queryFn: () => cashRepo.receivables() });
+  const columns: DataTableColumn<ReceivableExpectation>[] = [
+    { key: "counterparty", header: "Contraparte", cell: r => <span className="font-medium">{r.counterparty}</span> },
+    { key: "due", header: "Vencimento", cell: r => <span className="text-muted-foreground num">{dateBR(r.dueDate)}</span> },
+    { key: "source", header: "Origem", cell: r => <span className="text-muted-foreground">{r.source}</span> },
+    { key: "status", header: "Status", cell: r => <Badge variant={r.status === "overdue" ? "destructive" : "outline"} className="text-[10px]">{r.status === "overdue" ? "Em atraso" : "Agendado"}</Badge> },
+    { key: "amount", header: "Valor", align: "right", cell: r => <span className="num font-medium">{brl(r.amount)}</span> },
+  ];
   return (
     <div className="space-y-4">
       <h2 className="font-semibold">Recebíveis esperados</h2>
-      <div className="rounded-lg border border-border bg-card overflow-hidden">
-        <table className="w-full text-sm">
-          <thead className="bg-muted/40 text-muted-foreground"><tr><th className="text-left font-medium px-5 py-3">Contraparte</th><th className="text-left font-medium px-5 py-3">Vencimento</th><th className="text-left font-medium px-5 py-3">Origem</th><th className="text-left font-medium px-5 py-3">Status</th><th className="text-right font-medium px-5 py-3">Valor</th></tr></thead>
-          <tbody>
-            {data.map(r => (
-              <tr key={r.id} className="border-t"><td className="px-5 py-3 font-medium">{r.counterparty}</td><td className="px-5 py-3 text-muted-foreground num">{dateBR(r.dueDate)}</td><td className="px-5 py-3 text-muted-foreground">{r.source}</td><td className="px-5 py-3"><Badge variant={r.status === "overdue" ? "destructive" : "outline"} className="text-[10px]">{r.status === "overdue" ? "Em atraso" : "Agendado"}</Badge></td><td className="px-5 py-3 text-right num font-medium">{brl(r.amount)}</td></tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      {isLoading
+        ? <TableSkeleton rows={5} cols={5} />
+        : <DataTable rows={data} columns={columns} rowKey={r => r.id} caption="Recebíveis esperados" empty={<EmptyState title="Nenhum recebível registrado" description="Quando houver vendas a prazo ou repasses agendados, eles aparecerão aqui." />} />
+      }
     </div>
   );
 }
 
 export function Obrigacoes() {
-  const { data = [] } = useQuery({ queryKey: ["obligations"], queryFn: () => cashRepo.obligations() });
+  const { data = [], isLoading } = useQuery({ queryKey: ["obligations"], queryFn: () => cashRepo.obligations() });
+  const columns: DataTableColumn<PayableObligation>[] = [
+    { key: "counterparty", header: "Contraparte", cell: o => <span className="font-medium">{o.counterparty}</span> },
+    { key: "due", header: "Vencimento", cell: o => <span className="text-muted-foreground num">{dateBR(o.dueDate)}</span> },
+    { key: "category", header: "Categoria", cell: o => <span className="text-muted-foreground">{o.category}</span> },
+    { key: "severity", header: "Severidade", cell: o => <Badge variant={o.severity === "critical" ? "destructive" : o.severity === "high" ? "secondary" : "outline"} className="text-[10px]">{o.severity === "critical" ? "Crítica" : o.severity === "high" ? "Alta" : "Normal"}</Badge> },
+    { key: "amount", header: "Valor", align: "right", cell: o => <span className="num font-medium">{brl(o.amount)}</span> },
+  ];
   return (
     <div className="space-y-4">
       <h2 className="font-semibold">Obrigações próximas</h2>
-      <div className="rounded-lg border border-border bg-card overflow-hidden">
-        <table className="w-full text-sm">
-          <thead className="bg-muted/40 text-muted-foreground"><tr><th className="text-left font-medium px-5 py-3">Contraparte</th><th className="text-left font-medium px-5 py-3">Vencimento</th><th className="text-left font-medium px-5 py-3">Categoria</th><th className="text-left font-medium px-5 py-3">Severidade</th><th className="text-right font-medium px-5 py-3">Valor</th></tr></thead>
-          <tbody>
-            {data.map(o => (
-              <tr key={o.id} className="border-t"><td className="px-5 py-3 font-medium">{o.counterparty}</td><td className="px-5 py-3 text-muted-foreground num">{dateBR(o.dueDate)}</td><td className="px-5 py-3 text-muted-foreground">{o.category}</td><td className="px-5 py-3"><Badge variant={o.severity === "critical" ? "destructive" : o.severity === "high" ? "secondary" : "outline"} className="text-[10px]">{o.severity === "critical" ? "Crítica" : o.severity === "high" ? "Alta" : "Normal"}</Badge></td><td className="px-5 py-3 text-right num font-medium">{brl(o.amount)}</td></tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      {isLoading
+        ? <TableSkeleton rows={5} cols={5} />
+        : <DataTable rows={data} columns={columns} rowKey={o => o.id} caption="Obrigações próximas" empty={<EmptyState title="Nenhuma obrigação registrada" description="Cadastre boletos, folha e impostos para acompanhar saídas previstas." />} />
+      }
     </div>
   );
 }
