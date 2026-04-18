@@ -143,9 +143,9 @@ export default function Home() {
       <section className="bg-gradient-hero text-primary-foreground">
         <div className="container py-20 md:py-24 grid lg:grid-cols-2 gap-12 items-center">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wider opacity-80">Resultado prático</p>
-            <h2 className="mt-2 text-3xl md:text-4xl font-semibold tracking-tight text-balance">A pergunta certa, no dia certo, com o número confiável.</h2>
-            <p className="mt-4 opacity-90 max-w-xl">A leitura semanal do Contta substitui o ritual de "abrir 4 planilhas no domingo à noite" por uma única conversa com seus números.</p>
+            <p className="text-xs font-semibold uppercase tracking-wider text-primary-foreground/75">Resultado prático</p>
+            <h2 className="mt-2 text-3xl md:text-4xl font-semibold tracking-tight text-balance text-primary-foreground">A pergunta certa, no dia certo, com o número confiável.</h2>
+            <p className="mt-4 text-primary-foreground/85 max-w-xl">A leitura semanal do Contta substitui o ritual de "abrir 4 planilhas no domingo à noite" por uma única conversa com seus números.</p>
           </div>
           <div className="grid sm:grid-cols-2 gap-4">
             {[
@@ -154,9 +154,9 @@ export default function Home() {
               { t: "Reduz tempo de fechamento", d: "Revisão prioriza o que move o resultado." },
               { t: "Direciona a próxima ação", d: "Não é dashboard. É decisão." },
             ].map(p => (
-              <div key={p.t} className="rounded-lg bg-primary-foreground/10 border border-primary-foreground/15 p-5 backdrop-blur-sm">
-                <p className="font-semibold">{p.t}</p>
-                <p className="mt-1.5 text-sm opacity-85">{p.d}</p>
+              <div key={p.t} className="rounded-lg bg-primary-foreground/10 border border-primary-foreground/20 p-5 backdrop-blur-sm">
+                <p className="font-semibold text-primary-foreground">{p.t}</p>
+                <p className="mt-1.5 text-sm text-primary-foreground/80">{p.d}</p>
               </div>
             ))}
           </div>
