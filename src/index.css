@@ -118,6 +118,32 @@
   .text-balance { text-wrap: balance; }
   .num { font-variant-numeric: tabular-nums; }
 
+  /* Smooth interactive elevation for cards & tiles */
+  .hover-lift {
+    @apply transition-all duration-300 ease-out;
+  }
+  .hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+
+  /* Subtle press feedback for buttons & nav items */
+  .press-feedback {
+    @apply transition-transform duration-150 active:scale-[0.97];
+  }
+
+  /* Animated underline for inline links */
+  .story-link {
+    @apply relative inline-block;
+  }
+  .story-link::after {
+    content: "";
+    @apply absolute left-0 bottom-0 h-px w-full origin-bottom-right scale-x-0 bg-current transition-transform duration-300;
+  }
+  .story-link:hover::after {
+    @apply origin-bottom-left scale-x-100;
+  }
+
   /* When sitting on the hero gradient (dark teal), force a light foreground
      so any nested text-primary-foreground / opacity-* text reads cleanly. */
   .on-hero,
@@ -128,7 +154,17 @@
 
 @media (prefers-reduced-motion: reduce) {
   .animate-fade-in,
-  .animate-fade-in-slow {
+  .animate-fade-in-slow,
+  .animate-fade-in-up,
+  .animate-scale-in,
+  .animate-slide-in-right,
+  .animate-slide-in-left,
+  .animate-shimmer,
+  .animate-pulse-soft,
+  .hover-lift,
+  .press-feedback {
     animation: none !important;
+    transition: none !important;
+    transform: none !important;
   }
 }
