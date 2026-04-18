@@ -13,10 +13,10 @@ export const InlineAIEntryPoint = ({
   prompt,
   label = "Pergunte ao Contta AI sobre esta tela",
 }: Props) => (
-  <div className="fixed bottom-6 right-4 z-20 md:bottom-8 md:right-8">
+  <div className="fixed bottom-16 right-4 z-20 md:bottom-20 md:right-8 animate-fade-in-up">
     <Tooltip>
       <TooltipTrigger asChild>
-        <Button asChild size="lg" className="rounded-full px-4 shadow-elegant">
+        <Button asChild size="lg" className="rounded-full px-4 shadow-elegant hover-lift">
           <Link to={`/app/ai?prompt=${encodeURIComponent(prompt)}`}>
             <Sparkles className="h-4 w-4" />
             <span className="hidden sm:inline">{label}</span>

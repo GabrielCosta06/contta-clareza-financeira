@@ -20,9 +20,9 @@ const tones = {
 };
 
 export const StatCard = ({ label, value, hint, delta, className, emphasis = "default", footer }: Props) => (
-  <div className={cn("rounded-lg border p-5 transition-shadow hover:shadow-card", tones[emphasis], className)}>
+  <div className={cn("rounded-lg border p-5 hover-lift animate-fade-in", tones[emphasis], className)}>
     <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{label}</p>
-    <div className="mt-2 flex items-baseline gap-3">
+    <div className="mt-2 flex items-baseline gap-3 flex-wrap">
       <div className="text-[28px] font-semibold tracking-tight text-foreground num">{value}</div>
       {delta && <Delta value={delta.value} inverse={delta.inverse} />}
     </div>
