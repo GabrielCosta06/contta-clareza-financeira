@@ -194,14 +194,14 @@ export default function Onboarding() {
 
   return (
     <div className="min-h-screen bg-gradient-soft">
-      <div className="container max-w-4xl py-16">
+      <div className="container max-w-4xl py-8 md:py-16">
         <div className="mb-8">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <p className="text-xs font-semibold uppercase tracking-wider text-primary">
                 Configuração inicial — etapa {step + 1} de {steps.length}
               </p>
-              <h1 className="mt-2 text-3xl font-semibold tracking-tight text-foreground">Prepare sua primeira leitura.</h1>
+              <h1 className="mt-2 text-2xl sm:text-3xl font-semibold tracking-tight text-foreground">Prepare sua primeira leitura.</h1>
             </div>
             <Badge variant="outline" className="bg-background/80">
               {steps[step]}
@@ -210,7 +210,7 @@ export default function Onboarding() {
           <Progress value={pct} className="mt-4 h-1.5" />
         </div>
 
-        <div className="rounded-2xl border border-border bg-card p-8 shadow-card">
+        <div className="rounded-2xl border border-border bg-card p-5 sm:p-8 shadow-card">
           {step === 0 && (
             <div className="grid gap-8 md:gap-10 md:grid-cols-[1.2fr_0.8fr] md:items-center">
               <div>
