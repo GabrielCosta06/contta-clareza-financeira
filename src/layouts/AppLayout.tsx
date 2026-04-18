@@ -77,15 +77,26 @@ const NavItems = ({ onNavigate }: { onNavigate?: () => void }) => (
               onClick={onNavigate}
               className={({ isActive }) =>
                 cn(
-                  "flex items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                  "group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all",
                   isActive
-                    ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                    : "text-sidebar-foreground/80 hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground",
+                    ? "bg-sidebar-accent text-sidebar-accent-foreground shadow-sm"
+                    : "text-sidebar-foreground/70 hover:bg-sidebar-accent/40 hover:text-sidebar-accent-foreground",
                 )
               }
             >
-              <Icon className="h-4 w-4" />
-              {item.label}
+              {({ isActive }) => (
+                <>
+                  <span
+                    className={cn(
+                      "absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-r-full bg-primary transition-opacity",
+                      isActive ? "opacity-100" : "opacity-0",
+                    )}
+                    aria-hidden
+                  />
+                  <Icon className={cn("h-4 w-4 shrink-0 transition-colors", isActive ? "text-primary" : "text-sidebar-foreground/60 group-hover:text-sidebar-accent-foreground")} />
+                  <span className="truncate">{item.label}</span>
+                </>
+              )}
             </NavLink>
           </TooltipTrigger>
           <TooltipContent side="right">{item.shortcut}</TooltipContent>
@@ -154,20 +165,23 @@ export const AppLayout = () => {
 
   return (
     <div className="min-h-screen w-full bg-background flex">
-      <aside className="hidden w-60 shrink-0 flex-col bg-sidebar text-sidebar-foreground md:flex">
+      <aside className="hidden w-64 shrink-0 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground lg:flex">
         <div className="flex h-16 items-center border-b border-sidebar-border px-5">
-          <Link to="/app" className="flex items-center gap-2">
-            <div className="grid h-8 w-8 place-items-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground font-display text-lg leading-none">
+          <Link to="/app" className="group flex items-center gap-2.5">
+            <div className="grid h-9 w-9 place-items-center rounded-lg bg-gradient-to-br from-primary to-primary/70 font-display text-xl leading-none text-primary-foreground shadow-md ring-1 ring-primary/30 transition-transform group-hover:scale-105">
               c
             </div>
-            <span className="font-semibold tracking-tight">Contta</span>
+            <div className="flex flex-col">
+              <span className="font-semibold tracking-tight leading-tight">Contta</span>
+              <span className="text-[10px] uppercase tracking-wider text-sidebar-foreground/50 leading-tight">Clareza financeira</span>
+            </div>
           </Link>
         </div>
-        <nav className="flex-1 space-y-0.5 px-3 py-5">
+        <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-5">
           <NavItems />
         </nav>
-        <div className="border-t border-sidebar-border px-4 py-4 text-xs text-sidebar-foreground/60">
-          Plataforma de clareza financeira
+        <div className="border-t border-sidebar-border px-5 py-4 text-[11px] text-sidebar-foreground/50">
+          v1.0 · {new Date().getFullYear()}
         </div>
       </aside>
 
@@ -176,21 +190,21 @@ export const AppLayout = () => {
           <div className="flex min-w-0 items-center gap-1">
             <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="md:hidden" aria-label="Abrir menu de navegação">
+                <Button variant="ghost" size="icon" className="lg:hidden" aria-label="Abrir menu de navegação">
                   <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
               <SheetContent side="left" className="w-72 border-sidebar-border bg-sidebar p-0 text-sidebar-foreground">
                 <SheetHeader className="h-16 flex-row items-center space-y-0 border-b border-sidebar-border px-5">
-                  <Link to="/app" onClick={() => setMobileOpen(false)} className="flex items-center gap-2">
-                    <div className="grid h-8 w-8 place-items-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground font-display text-lg leading-none">
+                  <Link to="/app" onClick={() => setMobileOpen(false)} className="flex items-center gap-2.5">
+                    <div className="grid h-9 w-9 place-items-center rounded-lg bg-gradient-to-br from-primary to-primary/70 font-display text-xl leading-none text-primary-foreground shadow-md ring-1 ring-primary/30">
                       c
                     </div>
                     <SheetTitle className="font-semibold tracking-tight text-sidebar-foreground">Contta</SheetTitle>
                   </Link>
                   <SheetDescription className="sr-only">Navegação principal</SheetDescription>
                 </SheetHeader>
-                <nav className="space-y-0.5 px-3 py-5">
+                <nav className="space-y-1 px-3 py-5">
                   <NavItems onNavigate={() => setMobileOpen(false)} />
                 </nav>
               </SheetContent>

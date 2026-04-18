@@ -212,29 +212,29 @@ export default function Onboarding() {
 
         <div className="rounded-2xl border border-border bg-card p-8 shadow-card">
           {step === 0 && (
-            <div className="grid gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
+            <div className="grid gap-8 md:gap-10 md:grid-cols-[1.2fr_0.8fr] md:items-center">
               <div>
                 <div className="grid size-14 place-items-center rounded-2xl bg-primary-soft text-primary">
                   <Sparkles className="h-6 w-6" />
                 </div>
-                <h2 className="mt-5 text-3xl font-semibold tracking-tight">Bem-vinda ao Contta.</h2>
+                <h2 className="mt-5 text-2xl sm:text-3xl font-semibold tracking-tight">Bem-vinda ao Contta.</h2>
                 <p className="mt-3 max-w-xl text-sm leading-6 text-muted-foreground">
                   Vamos configurar os dados mínimos para que margem, caixa e revisão já comecem com contexto. Se preferir, você pode pular direto para a demo e explorar tudo agora.
                 </p>
 
-                <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-                  <Button size="lg" onClick={() => goToStep(1)}>
+                <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                  <Button size="lg" onClick={() => goToStep(1)} className="w-full sm:w-auto">
                     Começar configuração
                     <ArrowRight className="h-4 w-4" />
                   </Button>
-                  <Button size="lg" variant="outline" onClick={skipWithDemo}>
+                  <Button size="lg" variant="outline" onClick={skipWithDemo} className="w-full sm:w-auto">
                     <ShieldCheck className="h-4 w-4" />
                     Explorar com dados de exemplo
                   </Button>
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-border bg-gradient-to-br from-primary-soft/70 via-background to-background p-6">
+              <div className="rounded-2xl border border-border bg-gradient-to-br from-primary-soft/70 via-background to-background p-5 sm:p-6">
                 <p className="text-xs font-medium uppercase tracking-wider text-primary">O que você destrava agora</p>
                 <ul className="mt-4 space-y-3 text-sm text-foreground">
                   {[
@@ -244,8 +244,8 @@ export default function Onboarding() {
                     "Recap claro do que foi configurado antes de entrar no app.",
                   ].map((item) => (
                     <li key={item} className="flex items-start gap-2">
-                      <Check className="mt-0.5 h-4 w-4 text-success" />
-                      <span>{item}</span>
+                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-success" />
+                      <span className="leading-relaxed">{item}</span>
                     </li>
                   ))}
                 </ul>
