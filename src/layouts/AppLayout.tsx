@@ -77,10 +77,10 @@ const NavItems = ({ onNavigate }: { onNavigate?: () => void }) => (
               onClick={onNavigate}
               className={({ isActive }) =>
                 cn(
-                  "group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all",
+                  "group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium press-feedback transition-all duration-200",
                   isActive
                     ? "bg-sidebar-accent text-sidebar-accent-foreground shadow-sm"
-                    : "text-sidebar-foreground/70 hover:bg-sidebar-accent/40 hover:text-sidebar-accent-foreground",
+                    : "text-sidebar-foreground/70 hover:bg-sidebar-accent/40 hover:text-sidebar-accent-foreground hover:translate-x-0.5",
                 )
               }
             >
@@ -319,7 +319,9 @@ export const AppLayout = () => {
 
         <main className="mx-auto w-full max-w-[1400px] flex-1 px-4 py-6 md:px-8 md:py-8">
           <ErrorBoundary>
-            <Outlet />
+            <div key={location.pathname} className="animate-fade-in">
+              <Outlet />
+            </div>
           </ErrorBoundary>
         </main>
         <DemoScenarioBar />

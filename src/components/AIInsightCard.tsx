@@ -16,7 +16,7 @@ interface Props {
 }
 
 export const AIInsightCard = ({ title = "Leitura do Contta AI", summary, details, confidence, askHref = "/app/ai", askLabel = "Aprofundar com Contta AI", className }: Props) => (
-  <div className={cn("rounded-lg border border-primary/15 bg-gradient-to-br from-primary-soft/60 via-background to-background p-5", className)}>
+  <div className={cn("rounded-lg border border-primary/15 bg-gradient-to-br from-primary-soft/60 via-background to-background p-5 hover-lift animate-fade-in", className)}>
     <div className="flex items-start justify-between gap-4">
       <div className="flex items-center gap-2">
         <div className="grid h-8 w-8 place-items-center rounded-md bg-primary text-primary-foreground">
