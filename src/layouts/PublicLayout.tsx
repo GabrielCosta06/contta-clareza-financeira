@@ -2,6 +2,7 @@ import { Link, NavLink, Outlet } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetHeader, SheetDescription, SheetClose } from "@/components/ui/sheet";
+import { BrandLogo } from "@/components/BrandLogo";
 import { Menu } from "lucide-react";
 import { useState } from "react";
 
@@ -21,8 +22,7 @@ export const PublicLayout = () => {
       <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur-md">
         <div className="container flex h-16 items-center justify-between gap-4 md:gap-8">
           <Link to="/" className="flex items-center gap-2 group">
-            <div className="grid h-8 w-8 place-items-center rounded-md bg-gradient-hero text-primary-foreground font-display text-lg leading-none">c</div>
-            <span className="font-semibold text-foreground tracking-tight">Contta</span>
+            <BrandLogo className="h-9" />
           </Link>
           <nav className="hidden md:flex items-center gap-7">
             {nav.map(item => (
@@ -87,8 +87,7 @@ export const PublicLayout = () => {
         <div className="container py-12 grid gap-10 md:grid-cols-4">
           <div className="md:col-span-2">
             <div className="flex items-center gap-2">
-              <div className="grid h-8 w-8 place-items-center rounded-md bg-gradient-hero text-primary-foreground font-display text-lg leading-none">c</div>
-              <span className="font-semibold tracking-tight">Contta</span>
+              <BrandLogo className="h-9" />
             </div>
             <p className="mt-4 max-w-md text-sm text-muted-foreground">Clareza financeira para PMEs brasileiras. Margem, caixa e contexto tributário em uma leitura semanal confiável.</p>
           </div>

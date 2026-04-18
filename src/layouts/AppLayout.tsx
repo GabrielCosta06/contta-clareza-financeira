@@ -36,6 +36,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { DemoScenarioBar } from "@/components/DemoScenarioBar";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { AppCommandPalette } from "@/components/AppCommandPalette";
+import { BrandLogo } from "@/components/BrandLogo";
 
 
 const nav = [
@@ -168,9 +169,7 @@ export const AppLayout = () => {
       <aside className="hidden w-64 shrink-0 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground lg:flex">
         <div className="flex h-16 items-center border-b border-sidebar-border px-5">
           <Link to="/app" className="group flex items-center gap-2.5">
-            <div className="grid h-9 w-9 place-items-center rounded-lg bg-gradient-to-br from-primary to-primary/70 font-display text-xl leading-none text-primary-foreground shadow-md ring-1 ring-primary/30 transition-transform group-hover:scale-105">
-              c
-            </div>
+            <BrandLogo inverted className="h-9 transition-transform group-hover:scale-105" />
             <div className="flex flex-col">
               <span className="font-semibold tracking-tight leading-tight">Contta</span>
               <span className="text-[10px] uppercase tracking-wider text-sidebar-foreground/50 leading-tight">Clareza financeira</span>
@@ -197,9 +196,7 @@ export const AppLayout = () => {
               <SheetContent side="left" className="w-72 border-sidebar-border bg-sidebar p-0 text-sidebar-foreground">
                 <SheetHeader className="h-16 flex-row items-center space-y-0 border-b border-sidebar-border px-5">
                   <Link to="/app" onClick={() => setMobileOpen(false)} className="flex items-center gap-2.5">
-                    <div className="grid h-9 w-9 place-items-center rounded-lg bg-gradient-to-br from-primary to-primary/70 font-display text-xl leading-none text-primary-foreground shadow-md ring-1 ring-primary/30">
-                      c
-                    </div>
+                    <BrandLogo inverted className="h-9" />
                     <SheetTitle className="font-semibold tracking-tight text-sidebar-foreground">Contta</SheetTitle>
                   </Link>
                   <SheetDescription className="sr-only">Navegação principal</SheetDescription>
