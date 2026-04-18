@@ -169,7 +169,7 @@ export const AppLayout = () => {
       <aside className="hidden w-64 shrink-0 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground lg:flex">
         <div className="flex h-16 items-center border-b border-sidebar-border px-5">
           <Link to="/app" className="group flex items-center gap-2.5">
-            <BrandLogo inverted className="h-9 transition-transform group-hover:scale-105" />
+            <BrandLogo inverted className="w-[112px] transition-transform group-hover:scale-105" />
             <div className="flex flex-col">
               <span className="font-semibold tracking-tight leading-tight">Contta</span>
               <span className="text-[10px] uppercase tracking-wider text-sidebar-foreground/50 leading-tight">Clareza financeira</span>
@@ -196,7 +196,7 @@ export const AppLayout = () => {
               <SheetContent side="left" className="w-72 border-sidebar-border bg-sidebar p-0 text-sidebar-foreground">
                 <SheetHeader className="h-16 flex-row items-center space-y-0 border-b border-sidebar-border px-5">
                   <Link to="/app" onClick={() => setMobileOpen(false)} className="flex items-center gap-2.5">
-                    <BrandLogo inverted className="h-9" />
+                    <BrandLogo inverted className="w-[112px]" />
                     <SheetTitle className="font-semibold tracking-tight text-sidebar-foreground">Contta</SheetTitle>
                   </Link>
                   <SheetDescription className="sr-only">Navegação principal</SheetDescription>

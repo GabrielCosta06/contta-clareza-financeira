@@ -15,8 +15,8 @@ export function BrandLogo({ className, iconOnly = false, inverted = false }: Bra
       src={src}
       alt={alt}
       className={cn(
-        "block h-auto w-auto shrink-0",
-        iconOnly ? "h-9" : "h-8 md:h-9",
+        "block shrink-0 object-contain",
+        iconOnly ? "h-10 w-auto" : "h-auto w-[88px] sm:w-[112px] md:w-[132px]",
         className,
       )}
     />

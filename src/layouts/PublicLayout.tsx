@@ -20,9 +20,9 @@ export const PublicLayout = () => {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur-md">
-        <div className="container flex h-16 items-center justify-between gap-4 md:gap-8">
-          <Link to="/" className="flex items-center gap-2 group">
-            <BrandLogo className="h-9" />
+        <div className="container flex h-16 items-center justify-between gap-4 md:h-[4.5rem] md:gap-8">
+          <Link to="/" className="flex min-w-0 items-center group">
+            <BrandLogo className="w-[96px] sm:w-[116px] md:w-[136px]" />
           </Link>
           <nav className="hidden md:flex items-center gap-7">
             {nav.map(item => (
@@ -86,8 +86,8 @@ export const PublicLayout = () => {
       <footer className="border-t border-border/60 bg-card/40">
         <div className="container py-12 grid gap-10 md:grid-cols-4">
           <div className="md:col-span-2">
-            <div className="flex items-center gap-2">
-              <BrandLogo className="h-9" />
+            <div className="flex items-center">
+              <BrandLogo className="w-[108px] sm:w-[124px]" />
             </div>
             <p className="mt-4 max-w-md text-sm text-muted-foreground">Clareza financeira para PMEs brasileiras. Margem, caixa e contexto tributário em uma leitura semanal confiável.</p>
           </div>
