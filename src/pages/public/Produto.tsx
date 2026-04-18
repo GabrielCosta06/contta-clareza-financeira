@@ -77,7 +77,7 @@ export default function Produto() {
 
       <section className="container pb-24 pt-10">
         <div className="rounded-2xl bg-gradient-hero text-primary-foreground p-10 md:p-14 text-center">
-          <h2 className="text-3xl md:text-4xl font-semibold tracking-tight">Pronto para uma leitura confiável?</h2>
+          <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-primary-foreground">Pronto para uma leitura confiável?</h2>
           <Button asChild size="lg" variant="secondary" className="mt-6 gap-2"><Link to="/cadastro">Criar conta <ArrowRight className="h-4 w-4" /></Link></Button>
         </div>
       </section>
