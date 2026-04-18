@@ -459,7 +459,15 @@ export default function Dashboard() {
                   <XAxis dataKey="date" tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} interval={4} />
                   <YAxis tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} tickFormatter={(value) => formatBRL(value as number, { display: "compact" })} />
                   <Tooltip
-                    contentStyle={{ borderRadius: 8, border: "1px solid hsl(var(--border))", fontSize: 12 }}
+                    contentStyle={{
+                      borderRadius: 8,
+                      border: "1px solid hsl(var(--border))",
+                      backgroundColor: "hsl(var(--popover))",
+                      color: "hsl(var(--popover-foreground))",
+                      fontSize: 12,
+                    }}
+                    labelStyle={{ color: "hsl(var(--popover-foreground))", fontWeight: 600 }}
+                    itemStyle={{ color: "hsl(var(--popover-foreground))" }}
                     formatter={(value: number) => formatBRL(value)}
                   />
                   <Area type="monotone" dataKey="balance" stroke="hsl(var(--primary))" strokeWidth={2} fill="url(#cashFill)" />

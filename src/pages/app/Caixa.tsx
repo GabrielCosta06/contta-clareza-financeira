@@ -242,7 +242,15 @@ export function ProjectionChart() {
           />
           <Tooltip
             cursor={{ stroke: "hsl(var(--primary))", strokeDasharray: "4 4", strokeOpacity: 0.35 }}
-            contentStyle={{ borderRadius: 8, border: "1px solid hsl(var(--border))", fontSize: 12 }}
+            contentStyle={{
+              borderRadius: 8,
+              border: "1px solid hsl(var(--border))",
+              backgroundColor: "hsl(var(--popover))",
+              color: "hsl(var(--popover-foreground))",
+              fontSize: 12,
+            }}
+            labelStyle={{ color: "hsl(var(--popover-foreground))", fontWeight: 600 }}
+            itemStyle={{ color: "hsl(var(--popover-foreground))" }}
             formatter={(value) => formatBRL(Number(value), { display: "tooltip" })}
           />
           <ReferenceLine y={0} stroke="hsl(var(--destructive))" strokeDasharray="4 4" />
