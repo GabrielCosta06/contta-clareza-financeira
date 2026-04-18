@@ -8,169 +8,94 @@
 
 @layer base {
   :root {
-    /* Surfaces */
-    --background: 40 33% 98%;
-    --foreground: 220 25% 11%;
+    /* Surfaces — deep neutral with a warm teal undertone */
+    --background: 200 22% 6%;
+    --foreground: 40 28% 95%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 220 25% 11%;
+    --card: 200 20% 9%;
+    --card-foreground: 40 28% 95%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 220 25% 11%;
+    --popover: 200 20% 10%;
+    --popover-foreground: 40 28% 95%;
 
-    /* Brand: deep teal-green = trust + finance, not generic blue */
-    --primary: 168 65% 22%;
-    --primary-foreground: 40 33% 98%;
-    --primary-soft: 168 40% 94%;
+    /* Brand: vivid teal that pops on dark */
+    --primary: 168 60% 58%;
+    --primary-foreground: 200 30% 7%;
+    --primary-soft: 168 38% 14%;
 
-    --secondary: 220 15% 96%;
-    --secondary-foreground: 220 25% 18%;
+    --secondary: 200 16% 13%;
+    --secondary-foreground: 40 28% 95%;
 
-    --muted: 220 14% 96%;
-    --muted-foreground: 220 10% 46%;
+    --muted: 200 16% 13%;
+    --muted-foreground: 215 14% 70%;
 
-    --accent: 38 90% 55%;            /* warm gold for highlights */
-    --accent-foreground: 220 25% 11%;
+    --accent: 38 88% 64%;
+    --accent-foreground: 200 30% 7%;
 
-    /* Semantic */
-    --success: 158 60% 32%;
-    --success-foreground: 0 0% 100%;
-    --success-soft: 158 50% 94%;
+    /* Semantic — calibrated for dark surfaces */
+    --success: 158 58% 52%;
+    --success-foreground: 200 30% 7%;
+    --success-soft: 158 42% 14%;
 
-    --warning: 35 85% 48%;
-    --warning-foreground: 0 0% 100%;
-    --warning-soft: 38 90% 95%;
+    --warning: 35 88% 60%;
+    --warning-foreground: 200 30% 7%;
+    --warning-soft: 35 50% 14%;
 
-    --destructive: 358 70% 48%;
+    --destructive: 358 72% 62%;
     --destructive-foreground: 0 0% 100%;
-    --destructive-soft: 358 70% 96%;
+    --destructive-soft: 358 50% 16%;
 
-    --info: 215 65% 45%;
-    --info-soft: 215 70% 95%;
+    --info: 215 72% 64%;
+    --info-soft: 215 42% 16%;
 
-    --border: 220 15% 90%;
-    --input: 220 15% 90%;
-    --ring: 168 65% 22%;
+    --border: 200 16% 17%;
+    --input: 200 16% 17%;
+    --ring: 168 60% 58%;
 
     --radius: 0.625rem;
 
-    /* Confidence scale (data trust) */
-    --conf-none: 220 10% 70%;
-    --conf-low: 358 70% 48%;
-    --conf-partial: 35 85% 48%;
-    --conf-caveat: 45 85% 45%;
-    --conf-good: 158 60% 32%;
+    /* Confidence scale */
+    --conf-none: 215 8% 52%;
+    --conf-low: 358 72% 62%;
+    --conf-partial: 35 88% 60%;
+    --conf-caveat: 45 82% 58%;
+    --conf-good: 158 58% 52%;
 
-    /* Chart palette — cohesive, restrained */
-    --chart-1: 168 55% 30%;
-    --chart-2: 215 65% 45%;
-    --chart-3: 38 80% 50%;
-    --chart-4: 280 35% 50%;
-    --chart-5: 358 60% 50%;
+    /* Chart palette */
+    --chart-1: 168 60% 58%;
+    --chart-2: 215 72% 64%;
+    --chart-3: 38 88% 62%;
+    --chart-4: 280 52% 68%;
+    --chart-5: 358 68% 64%;
 
-    /* Sidebar */
-    --sidebar-background: 168 30% 12%;
-    --sidebar-foreground: 168 15% 88%;
-    --sidebar-primary: 38 90% 60%;
-    --sidebar-primary-foreground: 220 25% 11%;
-    --sidebar-accent: 168 25% 18%;
-    --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 168 20% 20%;
-    --sidebar-ring: 38 90% 60%;
+    /* Sidebar — deeper than card, distinct from background */
+    --sidebar-background: 200 26% 4%;
+    --sidebar-foreground: 168 14% 84%;
+    --sidebar-primary: 38 88% 64%;
+    --sidebar-primary-foreground: 200 30% 7%;
+    --sidebar-accent: 200 22% 12%;
+    --sidebar-accent-foreground: 40 28% 96%;
+    --sidebar-border: 200 20% 13%;
+    --sidebar-ring: 38 88% 64%;
 
-    /* Gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(168 65% 22%) 0%, hsl(168 50% 32%) 100%);
-    --gradient-soft: linear-gradient(180deg, hsl(40 33% 98%) 0%, hsl(168 30% 96%) 100%);
-    --gradient-accent: linear-gradient(90deg, hsl(38 90% 55%), hsl(35 85% 48%));
+    /* Gradients — always dark-on-light-text combos.
+       --gradient-hero is paired with text-primary-foreground in components,
+       so we override --primary-foreground only for those sections via a utility. */
+    --gradient-hero: linear-gradient(135deg, hsl(168 70% 24%) 0%, hsl(200 50% 14%) 100%);
+    --gradient-soft: linear-gradient(180deg, hsl(200 22% 6%) 0%, hsl(200 26% 9%) 100%);
+    --gradient-accent: linear-gradient(90deg, hsl(38 88% 64%), hsl(35 82% 56%));
 
-    /* Shadows */
-    --shadow-sm: 0 1px 2px hsl(220 25% 11% / 0.04);
-    --shadow-md: 0 4px 12px -2px hsl(220 25% 11% / 0.06), 0 2px 4px hsl(220 25% 11% / 0.04);
-    --shadow-lg: 0 24px 48px -12px hsl(168 65% 22% / 0.18);
+    --shadow-sm: 0 1px 2px hsl(0 0% 0% / 0.5);
+    --shadow-md: 0 4px 12px -2px hsl(0 0% 0% / 0.55), 0 2px 4px hsl(0 0% 0% / 0.35);
+    --shadow-lg: 0 24px 48px -12px hsl(0 0% 0% / 0.7);
 
     /* Type */
     --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
     --font-display: 'Instrument Serif', Georgia, serif;
   }
 
-  .dark {
-    /* Surfaces — layered neutrals with a hint of teal warmth */
-    --background: 200 20% 7%;
-    --foreground: 40 25% 94%;
-
-    --card: 200 18% 10%;
-    --card-foreground: 40 25% 94%;
-
-    --popover: 200 18% 11%;
-    --popover-foreground: 40 25% 94%;
-
-    /* Brand: brighter teal that holds up on dark */
-    --primary: 168 55% 55%;
-    --primary-foreground: 200 30% 8%;
-    --primary-soft: 168 35% 16%;
-
-    --secondary: 200 15% 14%;
-    --secondary-foreground: 40 25% 94%;
-
-    --muted: 200 15% 14%;
-    --muted-foreground: 215 12% 68%;
-
-    --accent: 38 85% 62%;
-    --accent-foreground: 200 30% 8%;
-
-    /* Semantic */
-    --success: 158 55% 50%;
-    --success-foreground: 200 30% 8%;
-    --success-soft: 158 40% 16%;
-
-    --warning: 35 85% 58%;
-    --warning-foreground: 200 30% 8%;
-    --warning-soft: 35 50% 16%;
-
-    --destructive: 358 70% 60%;
-    --destructive-foreground: 0 0% 100%;
-    --destructive-soft: 358 50% 18%;
-
-    --info: 215 70% 62%;
-    --info-soft: 215 40% 18%;
-
-    --border: 200 15% 18%;
-    --input: 200 15% 18%;
-    --ring: 168 55% 55%;
-
-    /* Confidence scale — tuned for dark */
-    --conf-none: 215 8% 50%;
-    --conf-low: 358 70% 60%;
-    --conf-partial: 35 85% 58%;
-    --conf-caveat: 45 80% 55%;
-    --conf-good: 158 55% 50%;
-
-    /* Chart palette — brighter, still cohesive */
-    --chart-1: 168 55% 55%;
-    --chart-2: 215 70% 62%;
-    --chart-3: 38 85% 60%;
-    --chart-4: 280 50% 65%;
-    --chart-5: 358 65% 62%;
-
-    /* Sidebar — slightly deeper than card, distinct from background */
-    --sidebar-background: 200 25% 5%;
-    --sidebar-foreground: 168 12% 82%;
-    --sidebar-primary: 38 85% 62%;
-    --sidebar-primary-foreground: 200 30% 8%;
-    --sidebar-accent: 200 20% 13%;
-    --sidebar-accent-foreground: 40 25% 96%;
-    --sidebar-border: 200 18% 14%;
-    --sidebar-ring: 38 85% 62%;
-
-    /* Gradients & shadows tuned for dark */
-    --gradient-hero: linear-gradient(135deg, hsl(168 50% 18%) 0%, hsl(200 30% 10%) 100%);
-    --gradient-soft: linear-gradient(180deg, hsl(200 20% 7%) 0%, hsl(200 22% 10%) 100%);
-    --gradient-accent: linear-gradient(90deg, hsl(38 85% 62%), hsl(35 80% 55%));
-
-    --shadow-sm: 0 1px 2px hsl(0 0% 0% / 0.4);
-    --shadow-md: 0 4px 12px -2px hsl(0 0% 0% / 0.45), 0 2px 4px hsl(0 0% 0% / 0.3);
-    --shadow-lg: 0 24px 48px -12px hsl(0 0% 0% / 0.6);
-  }
+  /* Keep .dark as alias of :root so existing dark: utilities still apply consistently */
+  .dark { color-scheme: dark; }
 }
 
 @layer base {
