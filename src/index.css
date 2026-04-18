@@ -117,6 +117,13 @@
   .shadow-card { box-shadow: var(--shadow-md); }
   .text-balance { text-wrap: balance; }
   .num { font-variant-numeric: tabular-nums; }
+
+  /* When sitting on the hero gradient (dark teal), force a light foreground
+     so any nested text-primary-foreground / opacity-* text reads cleanly. */
+  .on-hero,
+  .bg-gradient-hero {
+    --primary-foreground: 40 30% 96%;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
