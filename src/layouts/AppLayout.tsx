@@ -168,12 +168,8 @@ export const AppLayout = () => {
     <div className="min-h-screen w-full bg-background flex">
       <aside className="hidden w-64 shrink-0 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground lg:flex">
         <div className="flex h-16 items-center border-b border-sidebar-border px-5">
-          <Link to="/app" className="group flex items-center gap-2.5">
+          <Link to="/app" className="group flex items-center">
             <BrandLogo inverted className="w-[112px] transition-transform group-hover:scale-105" />
-            <div className="flex flex-col">
-              <span className="font-semibold tracking-tight leading-tight">Contta</span>
-              <span className="text-[10px] uppercase tracking-wider text-sidebar-foreground/50 leading-tight">Clareza financeira</span>
-            </div>
           </Link>
         </div>
         <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-5">
