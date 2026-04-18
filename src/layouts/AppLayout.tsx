@@ -36,7 +36,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { DemoScenarioBar } from "@/components/DemoScenarioBar";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { AppCommandPalette } from "@/components/AppCommandPalette";
-import { ThemeToggle } from "@/components/ThemeToggle";
+
 
 const nav = [
   { to: "/app/dashboard", label: "Visão geral", icon: LayoutDashboard, end: false, shortcut: "Pressione G e D" },
@@ -235,7 +235,7 @@ export const AppLayout = () => {
               <TooltipContent>Compartilhar leitura em PDF</TooltipContent>
             </Tooltip>
 
-            <ThemeToggle />
+            
 
             <Popover>
               <PopoverTrigger asChild>

@@ -19,23 +19,23 @@ export default function Home() {
       <section className="relative overflow-hidden bg-gradient-soft">
         <div className="container py-20 md:py-28 grid lg:grid-cols-2 gap-12 items-center">
           <div className="animate-fade-in">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary-soft px-3 py-1 text-xs font-medium text-primary">
-              <Sparkles className="h-3 w-3" /> Clareza financeira para PMEs brasileiras
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary-soft px-3 py-1 text-xs font-medium text-primary">
+              <Sparkles className="h-3 w-3" /> Feito para pequenas e médias empresas no Brasil
             </span>
             <h1 className="mt-5 text-4xl md:text-5xl lg:text-[56px] font-semibold leading-[1.05] tracking-tight text-foreground text-balance">
-              Onde sua margem está sendo <span className="font-display italic font-normal text-primary">protegida</span> — e onde está sendo erodida.
+              Saiba, toda semana, onde sua margem está sendo <span className="font-display italic font-normal text-primary">protegida</span> — e onde está sendo erodida.
             </h1>
             <p className="mt-5 text-lg text-muted-foreground max-w-xl text-balance">
-              Contta é a plataforma web de leitura financeira semanal para pequenas e médias empresas brasileiras. Margem, caixa, contexto tributário e a próxima ação relevante — em uma única tela confiável.
+              O Contta lê seus extratos, vendas e contas a pagar e devolve, em uma única tela, a saúde do seu negócio: margem, caixa dos próximos dias, impacto tributário e a próxima ação que faz diferença no resultado.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Button asChild size="lg" className="gap-2"><Link to="/cadastro">Criar conta <ArrowRight className="h-4 w-4" /></Link></Button>
-              <Button asChild size="lg" variant="outline"><Link to="/produto">Entender o produto</Link></Button>
+              <Button asChild size="lg" className="gap-2"><Link to="/cadastro">Começar grátis <ArrowRight className="h-4 w-4" /></Link></Button>
+              <Button asChild size="lg" variant="outline"><Link to="/produto">Ver como funciona</Link></Button>
             </div>
             <div className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-muted-foreground">
-              <span className="inline-flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-success" /> Não é um ERP</span>
-              <span className="inline-flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-success" /> Não é chatbot genérico</span>
-              <span className="inline-flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-success" /> Foco em leitura semanal</span>
+              <span className="inline-flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-success" /> Primeira leitura em minutos</span>
+              <span className="inline-flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-success" /> Sem instalar nada</span>
+              <span className="inline-flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-success" /> Cancele quando quiser</span>
             </div>
           </div>
 
@@ -143,9 +143,9 @@ export default function Home() {
       <section className="bg-gradient-hero text-primary-foreground">
         <div className="container py-20 md:py-24 grid lg:grid-cols-2 gap-12 items-center">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wider opacity-80">Resultado prático</p>
-            <h2 className="mt-2 text-3xl md:text-4xl font-semibold tracking-tight text-balance">A pergunta certa, no dia certo, com o número confiável.</h2>
-            <p className="mt-4 opacity-90 max-w-xl">A leitura semanal do Contta substitui o ritual de "abrir 4 planilhas no domingo à noite" por uma única conversa com seus números.</p>
+            <p className="text-xs font-semibold uppercase tracking-wider text-primary-foreground/75">Resultado prático</p>
+            <h2 className="mt-2 text-3xl md:text-4xl font-semibold tracking-tight text-balance text-primary-foreground">A pergunta certa, no dia certo, com o número confiável.</h2>
+            <p className="mt-4 text-primary-foreground/85 max-w-xl">A leitura semanal do Contta substitui o ritual de "abrir 4 planilhas no domingo à noite" por uma única conversa com seus números.</p>
           </div>
           <div className="grid sm:grid-cols-2 gap-4">
             {[
@@ -154,9 +154,9 @@ export default function Home() {
               { t: "Reduz tempo de fechamento", d: "Revisão prioriza o que move o resultado." },
               { t: "Direciona a próxima ação", d: "Não é dashboard. É decisão." },
             ].map(p => (
-              <div key={p.t} className="rounded-lg bg-primary-foreground/10 border border-primary-foreground/15 p-5 backdrop-blur-sm">
-                <p className="font-semibold">{p.t}</p>
-                <p className="mt-1.5 text-sm opacity-85">{p.d}</p>
+              <div key={p.t} className="rounded-lg bg-primary-foreground/10 border border-primary-foreground/20 p-5 backdrop-blur-sm">
+                <p className="font-semibold text-primary-foreground">{p.t}</p>
+                <p className="mt-1.5 text-sm text-primary-foreground/80">{p.d}</p>
               </div>
             ))}
           </div>
