@@ -19,23 +19,23 @@ export default function Home() {
       <section className="relative overflow-hidden bg-gradient-soft">
         <div className="container py-20 md:py-28 grid lg:grid-cols-2 gap-12 items-center">
           <div className="animate-fade-in">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary-soft px-3 py-1 text-xs font-medium text-primary">
-              <Sparkles className="h-3 w-3" /> Clareza financeira para PMEs brasileiras
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary-soft px-3 py-1 text-xs font-medium text-primary">
+              <Sparkles className="h-3 w-3" /> Feito para pequenas e médias empresas no Brasil
             </span>
             <h1 className="mt-5 text-4xl md:text-5xl lg:text-[56px] font-semibold leading-[1.05] tracking-tight text-foreground text-balance">
-              Onde sua margem está sendo <span className="font-display italic font-normal text-primary">protegida</span> — e onde está sendo erodida.
+              Saiba, toda semana, onde sua margem está sendo <span className="font-display italic font-normal text-primary">protegida</span> — e onde está sendo erodida.
             </h1>
             <p className="mt-5 text-lg text-muted-foreground max-w-xl text-balance">
-              Contta é a plataforma web de leitura financeira semanal para pequenas e médias empresas brasileiras. Margem, caixa, contexto tributário e a próxima ação relevante — em uma única tela confiável.
+              O Contta lê seus extratos, vendas e contas a pagar e devolve, em uma única tela, a saúde do seu negócio: margem, caixa dos próximos dias, impacto tributário e a próxima ação que faz diferença no resultado.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Button asChild size="lg" className="gap-2"><Link to="/cadastro">Criar conta <ArrowRight className="h-4 w-4" /></Link></Button>
-              <Button asChild size="lg" variant="outline"><Link to="/produto">Entender o produto</Link></Button>
+              <Button asChild size="lg" className="gap-2"><Link to="/cadastro">Começar grátis <ArrowRight className="h-4 w-4" /></Link></Button>
+              <Button asChild size="lg" variant="outline"><Link to="/produto">Ver como funciona</Link></Button>
             </div>
             <div className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-muted-foreground">
-              <span className="inline-flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-success" /> Não é um ERP</span>
-              <span className="inline-flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-success" /> Não é chatbot genérico</span>
-              <span className="inline-flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-success" /> Foco em leitura semanal</span>
+              <span className="inline-flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-success" /> Primeira leitura em minutos</span>
+              <span className="inline-flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-success" /> Sem instalar nada</span>
+              <span className="inline-flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-success" /> Cancele quando quiser</span>
             </div>
           </div>
 
