@@ -29,8 +29,8 @@
     --muted: 200 16% 13%;
     --muted-foreground: 215 14% 70%;
 
-    --accent: 38 88% 64%;
-    --accent-foreground: 200 30% 7%;
+    --accent: 168 50% 22%;
+    --accent-foreground: 168 60% 88%;
 
     /* Semantic — calibrated for dark surfaces */
     --success: 158 58% 52%;
@@ -71,12 +71,12 @@
     /* Sidebar — deeper than card, distinct from background */
     --sidebar-background: 200 26% 4%;
     --sidebar-foreground: 168 14% 84%;
-    --sidebar-primary: 38 88% 64%;
+    --sidebar-primary: 168 60% 58%;
     --sidebar-primary-foreground: 200 30% 7%;
-    --sidebar-accent: 200 22% 12%;
-    --sidebar-accent-foreground: 40 28% 96%;
+    --sidebar-accent: 168 38% 14%;
+    --sidebar-accent-foreground: 168 60% 88%;
     --sidebar-border: 200 20% 13%;
-    --sidebar-ring: 38 88% 64%;
+    --sidebar-ring: 168 60% 58%;
 
     /* Gradients — always dark-on-light-text combos.
        --gradient-hero is paired with text-primary-foreground in components,
