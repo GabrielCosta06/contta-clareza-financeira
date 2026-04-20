@@ -135,7 +135,7 @@ const getRecommendedAction = ({
       tone: "warning",
       eyebrow: "Próxima ação recomendada",
       title: "Atue na margem antes do próximo fechamento.",
-      description: "A receita segue rodando, mas a erosão de custo já está maior do que a variação de volume.",
+      description: "A receita continua acontecendo, mas o custo está subindo mais rápido do que o volume — e isso aperta sua margem.",
       ctaLabel: "Abrir margem",
       ctaHref: "/app/margem",
       context: [
