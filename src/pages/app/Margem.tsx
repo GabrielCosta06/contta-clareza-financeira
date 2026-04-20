@@ -40,7 +40,7 @@ export const MargemLayout = () => {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <PageHeader title="Margem" subtitle="Onde a profitabilidade está sendo formada — e onde está sendo erodida." />
+      <PageHeader title="Margem" subtitle="Veja onde sua margem está melhorando — e onde está caindo." />
       <Tabs value={activeValue} onValueChange={(value) => navigate(subnav.find((item) => item.value === value)?.to ?? "/app/margem")}>
         <div className="overflow-x-auto">
           <TabsList className="h-auto w-full min-w-max justify-start gap-1 rounded-lg bg-muted/50 p-1">

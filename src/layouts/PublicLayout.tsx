@@ -89,30 +89,30 @@ export const PublicLayout = () => {
             <div className="flex items-center">
               <BrandLogo className="w-[108px] sm:w-[124px]" />
             </div>
-            <p className="mt-4 max-w-md text-sm text-muted-foreground">Clareza financeira para PMEs brasileiras. Margem, caixa e contexto tributário em uma leitura semanal confiável.</p>
+            <p className="mt-4 max-w-md text-sm text-muted-foreground">Clareza financeira para empresas brasileiras. Margem, caixa e contexto tributário em uma leitura semanal confiável.</p>
           </div>
           <div>
             <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Produto</p>
             <ul className="space-y-2 text-sm">
-              <li><Link to="/produto" className="text-foreground/80 hover:text-foreground">Visão geral</Link></li>
-              <li><Link to="/como-funciona" className="text-foreground/80 hover:text-foreground">Como funciona</Link></li>
-              <li><Link to="/contta-ai" className="text-foreground/80 hover:text-foreground">Contta AI</Link></li>
-              <li><Link to="/precos" className="text-foreground/80 hover:text-foreground">Preços</Link></li>
+              <li><Link to="/produto" className="text-foreground/80 hover:text-foreground transition-colors">Visão geral</Link></li>
+              <li><Link to="/como-funciona" className="text-foreground/80 hover:text-foreground transition-colors">Como funciona</Link></li>
+              <li><Link to="/contta-ai" className="text-foreground/80 hover:text-foreground transition-colors">Contta AI</Link></li>
+              <li><Link to="/precos" className="text-foreground/80 hover:text-foreground transition-colors">Preços</Link></li>
             </ul>
           </div>
           <div>
             <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Empresa</p>
             <ul className="space-y-2 text-sm">
-              <li><Link to="/sobre" className="text-foreground/80 hover:text-foreground">Sobre</Link></li>
-              <li><Link to="/privacidade" className="text-foreground/80 hover:text-foreground">Privacidade</Link></li>
-              <li><Link to="/termos" className="text-foreground/80 hover:text-foreground">Termos</Link></li>
+              <li><Link to="/sobre" className="text-foreground/80 hover:text-foreground transition-colors">Sobre</Link></li>
+              <li><Link to="/privacidade" className="text-foreground/80 hover:text-foreground transition-colors">Privacidade</Link></li>
+              <li><Link to="/termos" className="text-foreground/80 hover:text-foreground transition-colors">Termos</Link></li>
             </ul>
           </div>
         </div>
         <div className="border-t border-border/60">
           <div className="container py-5 flex flex-col md:flex-row items-center justify-between gap-2 text-xs text-muted-foreground">
-            <p>© {new Date().getFullYear()} Contta. Plataforma de clareza financeira para PMEs brasileiras.</p>
-            <p>Feito no Brasil 🇧🇷</p>
+            <p>© {new Date().getFullYear()} Contta. Plataforma de clareza financeira para empresas brasileiras.</p>
+            <span aria-label="Brasil" title="Brasil" className="inline-flex items-center text-base leading-none">🇧🇷</span>
           </div>
         </div>
       </footer>
