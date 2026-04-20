@@ -14,9 +14,9 @@ export default function Produto() {
   return (
     <>
       <section className="bg-gradient-soft">
-        <div className="container py-20">
+        <div className="container py-20 animate-fade-in-up">
           <h1 className="text-4xl md:text-5xl font-semibold tracking-tight max-w-3xl text-balance">O Contta é uma plataforma de leitura financeira — não um ERP.</h1>
-          <p className="mt-5 text-lg text-muted-foreground max-w-2xl">Cabe entre o seu sistema operacional e a sua decisão semanal. Foco em margem, caixa, contexto tributário e ação.</p>
+          <p className="mt-5 text-lg text-muted-foreground max-w-2xl">Fica entre o seu sistema operacional e a sua decisão semanal. Foco em margem, caixa, contexto tributário e ação.</p>
           <div className="mt-7 flex gap-3">
             <Button asChild size="lg" className="gap-2"><Link to="/cadastro">Criar conta <ArrowRight className="h-4 w-4" /></Link></Button>
             <Button asChild size="lg" variant="outline"><Link to="/login">Já tenho conta</Link></Button>
@@ -27,12 +27,12 @@ export default function Produto() {
       <Section eyebrow="Quatro pilares" title="Uma leitura coerente entre profitabilidade, liquidez e contexto.">
         <div className="grid md:grid-cols-2 gap-4">
           {[
-            { Icon: TrendingUp, t: "Clareza de margem", d: "DRE simplificado, custos sob pressão e precificação onde dói. Direciona o que renegociar e o que reajustar." },
-            { Icon: Wallet, t: "Clareza de caixa", d: "Saldo atual, projeção de 30 dias, recebíveis confirmados e obrigações no radar. Antecipa o aperto." },
-            { Icon: Receipt, t: "Contexto tributário Brasil", d: "Regime, vencimentos e impacto fiscal — sem substituir a contabilidade, mas sem deixar você no escuro." },
+            { Icon: TrendingUp, t: "Entenda sua margem com clareza", d: "DRE simplificado, custos sob pressão e precificação onde dói. Direciona o que renegociar e o que reajustar." },
+            { Icon: Wallet, t: "Antecipe seu caixa", d: "Saldo atual, projeção de 30 dias, recebíveis confirmados e contas a pagar no radar. Antecipa o aperto." },
+            { Icon: Receipt, t: "Contexto tributário Brasil", d: "Regime, vencimentos e impacto dos impostos — sem substituir a contabilidade, mas sem deixar você no escuro." },
             { Icon: Sparkles, t: "Contta AI", d: "Camada de interpretação. Explica o que mudou no seu negócio em linguagem direta — com nível de confiança." },
           ].map(p => (
-            <div key={p.t} className="rounded-lg border border-border bg-card p-6">
+            <div key={p.t} className="rounded-lg border border-border bg-card p-6 hover-lift transition-colors hover:border-primary/30">
               <div className="grid h-10 w-10 place-items-center rounded-md bg-primary-soft text-primary mb-4"><p.Icon className="h-5 w-5" /></div>
               <h3 className="font-semibold">{p.t}</h3>
               <p className="mt-2 text-sm text-muted-foreground">{p.d}</p>
@@ -41,11 +41,11 @@ export default function Produto() {
         </div>
       </Section>
 
-      <Section eyebrow="Loop principal" title="Entrar dados → confiar nos números → ler → decidir.">
+      <Section eyebrow="Loop principal" title="Entrar dados → revisar o que importa → ler → decidir.">
         <ol className="space-y-4 max-w-2xl">
           {[
             "Entre, importe ou organize os dados financeiros da empresa.",
-            "Construa confiança nos números com a fila de revisão priorizada.",
+            "Revise primeiro o que mais pode mudar o resultado: categorias, comprovantes e duplicidades.",
             "Leia margem e caixa com indicador de confiança explícito.",
             "Receba do Contta AI a explicação do que mudou e a próxima ação relevante.",
           ].map((s, i) => (
@@ -69,7 +69,7 @@ export default function Produto() {
 
       <Section eyebrow="Para quem" title="Pensado para quem precisa decidir com clareza.">
         <ul className="grid md:grid-cols-2 gap-3 max-w-3xl">
-          {["Founders de PMEs brasileiras","Controllers e líderes financeiros","Sócios-administradores","Quem fecha o mês e precisa explicar o resultado"].map(t => (
+          {["Donos de pequenas e médias empresas no Brasil","Controllers e líderes financeiros","Sócios-administradores","Quem fecha o mês e precisa explicar o resultado"].map(t => (
             <li key={t} className="flex items-center gap-2 text-foreground"><Check className="h-4 w-4 text-success" /> {t}</li>
           ))}
         </ul>
