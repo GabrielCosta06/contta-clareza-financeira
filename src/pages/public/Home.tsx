@@ -23,7 +23,7 @@ export default function Home() {
               <Sparkles className="h-3 w-3" /> Feito para empresas brasileiras
             </span>
             <h1 className="mt-5 text-4xl md:text-5xl lg:text-[56px] font-semibold leading-[1.05] tracking-tight text-foreground text-balance">
-              Veja toda semana onde sua margem está <span className="font-display italic font-normal text-primary">melhorando</span> — e onde está caindo.
+              Veja toda semana onde sua margem está <span className="font-display italic font-normal text-primary">subindo</span> — e onde está caindo.
             </h1>
             <p className="mt-5 text-lg text-muted-foreground max-w-xl text-balance">
               O Contta lê seus extratos, vendas e contas a pagar e mostra, em uma única tela, o que importa: sua margem, o caixa dos próximos dias, o impacto dos impostos e a próxima ação que faz diferença no resultado.
