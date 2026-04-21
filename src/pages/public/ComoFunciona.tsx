@@ -18,8 +18,8 @@ const steps = [
   {
     n: "03",
     t: "Leitura de margem",
-    d: "DRE enxuto, principais custos e comparativos por período. Você vê onde o resultado está sendo formado.",
-    bullets: ["Margem bruta e de contribuição", "Variações com causa provável", "Custos sob pressão", "Pricing direcionado"],
+    d: "Resumo do resultado, principais custos e comparativos por período. Você vê de onde o lucro está vindo — e onde ele está ficando pelo caminho.",
+    bullets: ["Margem bruta e de contribuição", "Variações com causa provável", "Onde os custos mais subiram", "Onde ajustar preço primeiro"],
   },
   {
     n: "04",

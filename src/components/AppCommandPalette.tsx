@@ -33,7 +33,7 @@ import { toast } from "@/components/ui/sonner";
 const navigationItems = [
   {
     label: "Visão geral",
-    hint: "Dashboard executivo",
+    hint: "Os números mais importantes da empresa",
     to: "/app/dashboard",
     shortcut: "G D",
     icon: LayoutDashboard,

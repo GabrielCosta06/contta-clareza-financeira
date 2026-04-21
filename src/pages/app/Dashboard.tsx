@@ -239,8 +239,8 @@ export default function Dashboard() {
     <div className="space-y-6 animate-fade-in">
       <PageHeader
         eyebrow="Sua leitura semanal"
-        title="Como estamos agora — e o que merece atenção primeiro."
-        subtitle="Resumo direto da semana, com indicador de confiança em cada leitura."
+        title="Como sua empresa está agora — e o que olhar primeiro."
+        subtitle="Os números mais importantes da semana, com nível de confiança em cada um."
         actions={
           <>
             <Button asChild variant="outline" size="sm">
@@ -381,9 +381,9 @@ export default function Dashboard() {
           />
 
           <StatCard
-            label="Pendências críticas"
+            label="Itens urgentes para revisar"
             value={critical.length}
-            hint={critical.length ? "Itens que podem alterar o resultado do fechamento." : "Nenhuma pendência crítica."}
+            hint={critical.length ? "Itens que podem mudar o resultado do mês." : "Nada urgente para revisar agora."}
             emphasis={critical.length ? "destructive" : "default"}
             footer={
               <Button asChild variant="ghost" size="sm" className="-mr-2 text-primary">
