@@ -10,8 +10,6 @@ interface RevealProps {
   delay?: number;
   /** Animation variant. */
   variant?: Variant;
-  /** Render as a different element. Defaults to div. */
-  as?: keyof JSX.IntrinsicElements;
   /** IntersectionObserver rootMargin. */
   rootMargin?: string;
   /** Reveal only once (default true). */
@@ -26,11 +24,10 @@ export const Reveal = ({
   className,
   delay = 0,
   variant = "up",
-  as: Tag = "div",
   rootMargin = "0px 0px -10% 0px",
   once = true,
 }: RevealProps) => {
-  const ref = useRef<HTMLElement | null>(null);
+  const ref = useRef<HTMLDivElement | null>(null);
   const [shown, setShown] = useState(false);
 
   useEffect(() => {
@@ -74,15 +71,9 @@ export const Reveal = ({
     willChange: "opacity, transform",
   };
 
-  // @ts-expect-error – dynamic tag
   return (
-    // @ts-expect-error – dynamic tag
-    <Tag
-      ref={ref as never}
-      style={style}
-      className={cn(shown ? final : initial[variant], className)}
-    >
+    <div ref={ref} style={style} className={cn(shown ? final : initial[variant], className)}>
       {children}
-    </Tag>
+    </div>
   );
 };
