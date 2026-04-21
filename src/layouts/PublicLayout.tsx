@@ -89,7 +89,7 @@ export const PublicLayout = () => {
             <div className="flex items-center">
               <BrandLogo className="w-[108px] sm:w-[124px]" />
             </div>
-            <p className="mt-4 max-w-md text-sm text-muted-foreground">Clareza financeira para empresas brasileiras. Margem, caixa e contexto tributário em uma leitura semanal confiável.</p>
+            <p className="mt-4 max-w-md text-sm text-muted-foreground">Clareza financeira para empresas brasileiras. Margem, caixa e a próxima ação que faz diferença no resultado — em uma leitura semanal confiável.</p>
           </div>
           <div>
             <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Produto</p>
@@ -111,7 +111,7 @@ export const PublicLayout = () => {
         </div>
         <div className="border-t border-border/60">
           <div className="container py-5 flex flex-col md:flex-row items-center justify-between gap-2 text-xs text-muted-foreground">
-            <p>© {new Date().getFullYear()} Contta. Plataforma de clareza financeira para empresas brasileiras.</p>
+            <p>© {new Date().getFullYear()} Contta. Clareza financeira para empresas brasileiras.</p>
             <span aria-label="Brasil" title="Brasil" className="inline-flex items-center text-base leading-none">🇧🇷</span>
           </div>
         </div>

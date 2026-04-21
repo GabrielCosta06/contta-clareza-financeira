@@ -21,7 +21,7 @@ export default function Configuracoes() {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <PageHeader title="Configurações" subtitle="Parâmetros operacionais que sustentam a leitura financeira." />
+      <PageHeader title="Configurações" subtitle="Ajustes da empresa, conexões e preferências da sua leitura semanal." />
 
       <div className="grid md:grid-cols-2 gap-4">
         <div className="rounded-lg border border-border bg-card p-5">

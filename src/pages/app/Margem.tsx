@@ -20,10 +20,10 @@ import { formatBRL, pct, useCompactCurrency } from "@/lib/format";
 
 const subnav = [
   { to: "/app/margem", label: "Visão geral", value: "overview" },
-  { to: "/app/margem/dre", label: "DRE", value: "dre" },
+  { to: "/app/margem/dre", label: "Resultado", value: "dre" },
   { to: "/app/margem/custos", label: "Custos", value: "costs" },
   { to: "/app/margem/orcamento", label: "Orçamento", value: "budget" },
-  { to: "/app/margem/precificacao", label: "Precificação", value: "pricing" },
+  { to: "/app/margem/precificacao", label: "Preços", value: "pricing" },
 ];
 
 export const MargemLayout = () => {
@@ -178,13 +178,13 @@ export default function Margem() {
 
       <div className="flex flex-wrap gap-2">
         <Button asChild variant="outline" size="sm">
-          <Link to="/app/margem/dre">Abrir DRE</Link>
+          <Link to="/app/margem/dre">Ver resultado mês a mês</Link>
         </Button>
         <Button asChild variant="outline" size="sm">
           <Link to="/app/margem/custos">Ver custos</Link>
         </Button>
         <Button asChild variant="outline" size="sm">
-          <Link to="/app/margem/precificacao">Precificação</Link>
+          <Link to="/app/margem/precificacao">Ajustar preços</Link>
         </Button>
       </div>
 
