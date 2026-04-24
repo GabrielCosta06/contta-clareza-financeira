@@ -110,7 +110,6 @@ export const AppLayout = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const { data: company } = useQuery({ queryKey: ["company"], queryFn: () => companyRepo.current() });
   const { data: alerts = [] } = useQuery({ queryKey: ["alerts"], queryFn: () => alertsRepo.list() });
   const critical = alerts.filter((alert) => alert.severity === "critical").length;
   const [mobileOpen, setMobileOpen] = useState(false);
