@@ -3,8 +3,6 @@ import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-do
 import { useQuery } from "@tanstack/react-query";
 import {
   Bell,
-  Building2,
-  ChevronDown,
   LayoutDashboard,
   LogOut,
   Menu,
@@ -18,7 +16,7 @@ import {
 } from "lucide-react";
 
 import { useAuth } from "@/hooks/useAuth";
-import { alertsRepo, companyRepo } from "@/services";
+import { alertsRepo } from "@/services";
 import { cn } from "@/lib/utils";
 import {
   DropdownMenu,
