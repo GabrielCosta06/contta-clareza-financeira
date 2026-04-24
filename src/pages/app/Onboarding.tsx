@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -10,6 +10,7 @@ import {
   ChevronLeft,
   CreditCard,
   Landmark,
+  Lock,
   ReceiptText,
   Settings2,
   ShieldCheck,
@@ -17,8 +18,9 @@ import {
   Store,
 } from "lucide-react";
 
-import { authService } from "@/services";
+import { authService, companyRepo } from "@/services";
 import { useDemoScenario } from "@/hooks/useDemoScenario";
+import { useCompanies } from "@/hooks/useCompanies";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -34,6 +36,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/components/ui/sonner";
+import { brl } from "@/lib/format";
 import type { Company } from "@/domain/types";
 
 const onboardingSchema = z.object({
