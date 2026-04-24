@@ -392,10 +392,17 @@ export default function Onboarding() {
                 </div>
 
                 <div className="mt-8 flex justify-between gap-2">
-                  <Button variant="ghost" onClick={() => goToStep(0)}>
-                    <ChevronLeft className="h-4 w-4" />
-                    Voltar
-                  </Button>
+                  {isNewCompany ? (
+                    <Button variant="ghost" onClick={() => navigate("/app/configuracoes/empresas")}>
+                      <ChevronLeft className="h-4 w-4" />
+                      Cancelar
+                    </Button>
+                  ) : (
+                    <Button variant="ghost" onClick={() => goToStep(0)}>
+                      <ChevronLeft className="h-4 w-4" />
+                      Voltar
+                    </Button>
+                  )}
                   <Button onClick={continueFromCompany}>
                     Continuar
                     <ArrowRight className="h-4 w-4" />
@@ -451,15 +458,24 @@ export default function Onboarding() {
               )}
 
               <div className="mt-8 flex flex-col gap-3 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                  <p className="text-sm font-medium text-foreground">Quer pular esta etapa?</p>
-                  <p className="text-xs text-muted-foreground">Você entra com a demo confiável e conecta dados reais depois.</p>
-                </div>
+                {isNewCompany ? (
+                  <p className="text-xs text-muted-foreground">
+                    <Lock className="mr-1 inline h-3 w-3" />
+                    Você poderá conectar bancos e maquininha desta nova empresa em Configurações depois.
+                  </p>
+                ) : (
+                  <div>
+                    <p className="text-sm font-medium text-foreground">Quer pular esta etapa?</p>
+                    <p className="text-xs text-muted-foreground">Você entra com a demo confiável e conecta dados reais depois.</p>
+                  </div>
+                )}
                 <div className="flex gap-2">
-                  <Button variant="outline" onClick={skipWithDemo}>
-                    <Sparkles className="h-4 w-4" />
-                    Seguir com demo
-                  </Button>
+                  {!isNewCompany && (
+                    <Button variant="outline" onClick={skipWithDemo}>
+                      <Sparkles className="h-4 w-4" />
+                      Seguir com demo
+                    </Button>
+                  )}
                   <Button onClick={continueFromSources}>
                     Revisar configuração
                     <ArrowRight className="h-4 w-4" />
