@@ -513,21 +513,27 @@ export default function Onboarding() {
               </div>
 
               <div className="mt-6 rounded-xl border border-primary/20 bg-primary-soft/40 p-4">
-                <p className="text-xs font-medium uppercase tracking-wider text-primary">Modo de entrada</p>
+                <p className="text-xs font-medium uppercase tracking-wider text-primary">
+                  {isNewCompany ? "Nova empresa" : "Modo de entrada"}
+                </p>
                 <p className="mt-1 text-sm text-foreground">
-                  {mode === "demo"
-                    ? "Você vai abrir com dados de exemplo completos para explorar todas as leituras."
-                    : "Você vai abrir com uma leitura inicial baseada nas fontes escolhidas nesta configuração."}
+                  {isNewCompany
+                    ? `${values.tradeName} será criada e definida como empresa ativa. ${newCompanyAddonHint ?? ""}`.trim()
+                    : mode === "demo"
+                      ? "Você vai abrir com dados de exemplo completos para explorar todas as leituras."
+                      : "Você vai abrir com uma leitura inicial baseada nas fontes escolhidas nesta configuração."}
                 </p>
               </div>
 
               <div className="mt-8 flex justify-between gap-2">
-                <Button variant="ghost" onClick={() => goToStep(2)}>
+                <Button variant="ghost" onClick={() => goToStep(2)} disabled={submitting}>
                   <ChevronLeft className="h-4 w-4" />
                   Voltar
                 </Button>
-                <Button onClick={() => finish()}>
-                  Abrir minha visão geral
+                <Button onClick={() => finish()} disabled={submitting}>
+                  {isNewCompany
+                    ? submitting ? "Criando..." : "Criar empresa"
+                    : "Abrir minha visão geral"}
                   <ArrowRight className="h-4 w-4" />
                 </Button>
               </div>
