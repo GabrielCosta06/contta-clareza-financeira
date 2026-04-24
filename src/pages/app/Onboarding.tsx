@@ -105,22 +105,67 @@ const initialValues: OnboardingValues = {
   sources: ["itau", "stone"],
 };
 
+const emptyValues: OnboardingValues = {
+  tradeName: "",
+  cnpj: "",
+  taxRegime: "Simples Nacional",
+  sources: [],
+};
+
 export default function Onboarding() {
-  const [step, setStep] = useState(0);
-  const [mode, setMode] = useState<"guided" | "demo">("guided");
+  const [searchParams] = useSearchParams();
+  const isNewCompany = searchParams.get("mode") === "new";
+  const { canAddCompany, subscription, companies, extraCompanies } = useCompanies();
   const navigate = useNavigate();
   const { setScenario } = useDemoScenario();
+
+  const [step, setStep] = useState(isNewCompany ? 1 : 0);
+  const [mode, setMode] = useState<"guided" | "demo">("guided");
+  const [submitting, setSubmitting] = useState(false);
   const form = useForm<OnboardingValues>({
     resolver: zodResolver(onboardingSchema),
-    defaultValues: initialValues,
+    defaultValues: isNewCompany ? emptyValues : initialValues,
     mode: "onTouched",
   });
+
+  // Block access to the new-company flow when the plan limit is reached.
+  useEffect(() => {
+    if (!isNewCompany) return;
+    if (subscription && !canAddCompany) {
+      toast.error("Limite do plano atingido", {
+        description: `O plano ${subscription.planLabel} permite até ${subscription.maxCompanies} empresa(s).`,
+      });
+      navigate("/app/configuracoes/empresas", { replace: true });
+    }
+  }, [isNewCompany, canAddCompany, subscription, navigate]);
 
   const pct = ((step + 1) / steps.length) * 100;
   const selectedSources = form.watch("sources");
   const values = form.getValues();
 
-  const finish = (nextMode: "guided" | "demo" = mode, nextSources = selectedSources) => {
+  const finish = async (nextMode: "guided" | "demo" = mode, nextSources = selectedSources) => {
+    if (isNewCompany) {
+      setSubmitting(true);
+      try {
+        const created = await companyRepo.create({
+          tradeName: values.tradeName,
+          cnpj: values.cnpj,
+          taxRegime: values.taxRegime,
+        });
+        toast.success("Empresa criada", {
+          description: `${created.tradeName} já é a empresa ativa. Configure as fontes em Configurações.`,
+        });
+        navigate("/app/dashboard");
+      } catch (e) {
+        toast.error("Não foi possível criar a empresa", {
+          description: e instanceof Error ? e.message : "Tente novamente em instantes.",
+        });
+      } finally {
+        setSubmitting(false);
+      }
+      return;
+    }
+
     authService.setOnboarded(true);
     setScenario(nextMode === "demo" ? "reliable" : nextSources.length > 0 ? "partial" : "empty");
     toast.success(nextMode === "demo" ? "Demo pronta para explorar" : "Configuração inicial concluída", {
@@ -134,6 +179,7 @@ export default function Onboarding() {
   const goToStep = (nextStep: number) => setStep(nextStep);
 
   const skipWithDemo = () => {
+    if (isNewCompany) return;
     const demoSources = ["itau", "stone", "csv"];
     setMode("demo");
     form.setValue("sources", demoSources);
@@ -149,7 +195,7 @@ export default function Onboarding() {
   };
 
   const continueFromSources = async () => {
-    if (selectedSources.length === 0) {
+    if (!isNewCompany && selectedSources.length === 0) {
       form.setError("sources", { message: "Selecione pelo menos uma fonte ou siga com a demo." });
       return;
     }
@@ -169,6 +215,17 @@ export default function Onboarding() {
     form.setValue("sources", next, { shouldTouch: true, shouldValidate: true });
     form.clearErrors("sources");
   };
+
+  const newCompanyAddonHint = useMemo(() => {
+    if (!isNewCompany || !subscription) return null;
+    if (subscription.addonPricePerCompany <= 0) return null;
+    // Adding this company would push us one over the included quota?
+    const willBeExtra = companies.length + 1 > subscription.includedCompanies;
+    if (!willBeExtra) return null;
+    const newExtra = extraCompanies + 1;
+    const newTotal = subscription.basePrice + newExtra * subscription.addonPricePerCompany;
+    return `Esta empresa adiciona ${brl(subscription.addonPricePerCompany)}/mês ao seu plano (total estimado: ${brl(newTotal)}/mês).`;
+  }, [isNewCompany, subscription, companies.length, extraCompanies]);
 
   const recapItems = [
     {
