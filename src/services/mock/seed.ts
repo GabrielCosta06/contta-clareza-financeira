@@ -8,8 +8,8 @@ import type {
 
 export const seedUser: User = {
   id: "u_1",
-  name: "Marina Cardoso",
-  email: "marina@estrelacafe.com.br",
+  name: "Natalia Amaral",
+  email: "nati@estrelacafe.com.br",
   role: "controller",
 };
 
