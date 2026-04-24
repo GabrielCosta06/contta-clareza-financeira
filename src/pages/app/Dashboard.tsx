@@ -259,6 +259,8 @@ export default function Dashboard() {
         }
       />
 
+      <DataTrustBanner level={margin?.confidence ?? cash?.confidence ?? "no-data"} />
+
       <section className={`rounded-2xl border p-6 shadow-card ${heroStyles[recommendedAction.tone]}`}>
         <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-3xl">
