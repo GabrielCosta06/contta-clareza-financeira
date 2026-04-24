@@ -3,8 +3,6 @@ import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-do
 import { useQuery } from "@tanstack/react-query";
 import {
   Bell,
-  Building2,
-  ChevronDown,
   LayoutDashboard,
   LogOut,
   Menu,
@@ -18,7 +16,7 @@ import {
 } from "lucide-react";
 
 import { useAuth } from "@/hooks/useAuth";
-import { alertsRepo, companyRepo } from "@/services";
+import { alertsRepo } from "@/services";
 import { cn } from "@/lib/utils";
 import {
   DropdownMenu,
@@ -37,6 +35,7 @@ import { DemoScenarioBar } from "@/components/DemoScenarioBar";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { AppCommandPalette } from "@/components/AppCommandPalette";
 import { BrandLogo } from "@/components/BrandLogo";
+import { CompanySwitcher } from "@/components/CompanySwitcher";
 
 
 const nav = [
@@ -111,7 +110,6 @@ export const AppLayout = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const { data: company } = useQuery({ queryKey: ["company"], queryFn: () => companyRepo.current() });
   const { data: alerts = [] } = useQuery({ queryKey: ["alerts"], queryFn: () => alertsRepo.list() });
   const critical = alerts.filter((alert) => alert.severity === "critical").length;
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -203,29 +201,7 @@ export const AppLayout = () => {
               </SheetContent>
             </Sheet>
 
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="min-w-0 gap-2 px-2">
-                  <div className="grid h-7 w-7 shrink-0 place-items-center rounded bg-primary-soft text-primary">
-                    <Building2 className="h-3.5 w-3.5" />
-                  </div>
-                  <div className="hidden min-w-0 text-left sm:block">
-                    <p className="text-xs leading-none text-muted-foreground">Empresa atual</p>
-                    <p className="mt-0.5 max-w-[160px] truncate text-sm font-medium leading-tight">{company?.tradeName ?? "—"}</p>
-                  </div>
-                  <ChevronDown className="hidden h-4 w-4 text-muted-foreground sm:block" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-64">
-                <DropdownMenuLabel>Empresas</DropdownMenuLabel>
-                <DropdownMenuItem className="flex flex-col items-start gap-0.5">
-                  <span className="font-medium">{company?.tradeName}</span>
-                  <span className="text-xs text-muted-foreground">{company?.cnpj} · {company?.taxRegime}</span>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => navigate("/app/configuracoes")}>Gerenciar empresa</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <CompanySwitcher />
           </div>
 
           <div className="flex items-center gap-1">

@@ -4,8 +4,17 @@ import type {
   Transaction, TransactionCategory, ReviewItem, MarginView, DREView,
   CostBreakdownItem, BudgetLine, PricingInsight, CashView, CashProjectionPoint,
   ReceivableExpectation, PayableObligation, FinancialAlert, AIConversation,
-  AIMessage, Company, User, FinancialAccount, ImportJob, TaxContext, ReportingPeriod
+  AIMessage, Company, User, FinancialAccount, ImportJob, TaxContext, ReportingPeriod,
+  Subscription
 } from "@/domain/types";
+
+export interface NewCompanyInput {
+  tradeName: string;
+  legalName?: string;
+  cnpj: string;
+  segment?: string;
+  taxRegime: Company["taxRegime"];
+}
 
 export interface TransactionsRepo {
   list(query?: { search?: string; status?: string; categoryId?: string }): Promise<Transaction[]>;
@@ -50,9 +59,18 @@ export interface AIRepo {
 
 export interface CompanyRepo {
   current(): Promise<Company>;
+  list(): Promise<Company[]>;
+  create(input: NewCompanyInput): Promise<Company>;
+  setActive(companyId: string): Promise<Company>;
   accounts(): Promise<FinancialAccount[]>;
   taxContext(): Promise<TaxContext>;
   periods(): Promise<ReportingPeriod[]>;
+}
+
+export interface SubscriptionRepo {
+  current(): Promise<Subscription>;
+  /** Mock helper to upgrade plan from the UI for demo purposes. */
+  setPlan(plan: Subscription["plan"]): Promise<Subscription>;
 }
 
 export interface AuthService {

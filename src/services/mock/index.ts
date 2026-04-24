@@ -2,11 +2,12 @@
 // TODO(backend): replace these with real fetch/RPC clients.
 import type {
   TransactionsRepo, CategoriesRepo, ReviewRepo, MarginRepo, CashRepo,
-  AlertsRepo, AIRepo, CompanyRepo, AuthService
+  AlertsRepo, AIRepo, CompanyRepo, AuthService, SubscriptionRepo, NewCompanyInput
 } from "@/services/contracts";
 import type {
   AIMessage, User, Transaction, ReviewItem, MarginView, CashView,
-  CashProjectionPoint, ReceivableExpectation, PayableObligation, FinancialAlert
+  CashProjectionPoint, ReceivableExpectation, PayableObligation, FinancialAlert,
+  Company, Subscription, SubscriptionPlan
 } from "@/domain/types";
 import {
   seedTransactions, seedCategories, seedReview, seedMargin, seedDRE,
@@ -246,11 +247,128 @@ export const aiRepo: AIRepo = {
   },
 };
 
+// ---- companies (multi-company support) ----
+const COMPANIES_KEY = "contta.companies";
+const ACTIVE_COMPANY_KEY = "contta.activeCompanyId";
+
+const loadCompanies = (): Company[] => {
+  if (typeof window === "undefined") return [seedCompany];
+  try {
+    const raw = localStorage.getItem(COMPANIES_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw) as Company[];
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch {}
+  const initial = [seedCompany];
+  localStorage.setItem(COMPANIES_KEY, JSON.stringify(initial));
+  return initial;
+};
+
+const saveCompanies = (companies: Company[]) => {
+  if (typeof window === "undefined") return;
+  localStorage.setItem(COMPANIES_KEY, JSON.stringify(companies));
+};
+
+const getActiveCompanyId = (): string => {
+  if (typeof window === "undefined") return seedCompany.id;
+  return localStorage.getItem(ACTIVE_COMPANY_KEY) || seedCompany.id;
+};
+
+const setActiveCompanyId = (id: string) => {
+  if (typeof window === "undefined") return;
+  localStorage.setItem(ACTIVE_COMPANY_KEY, id);
+};
+
 export const companyRepo: CompanyRepo = {
-  async current() { return delay(seedCompany); },
+  async current() {
+    const companies = loadCompanies();
+    const activeId = getActiveCompanyId();
+    const active = companies.find(c => c.id === activeId) ?? companies[0];
+    return delay(active);
+  },
+  async list() {
+    return delay(loadCompanies());
+  },
+  async create(input: NewCompanyInput) {
+    const companies = loadCompanies();
+    const newCompany: Company = {
+      id: `c_${crypto.randomUUID().slice(0, 8)}`,
+      tradeName: input.tradeName,
+      legalName: input.legalName?.trim() || input.tradeName,
+      cnpj: input.cnpj,
+      segment: input.segment?.trim() || "—",
+      taxRegime: input.taxRegime,
+      createdAt: new Date().toISOString(),
+    };
+    const next = [...companies, newCompany];
+    saveCompanies(next);
+    setActiveCompanyId(newCompany.id);
+    return delay(newCompany, 500);
+  },
+  async setActive(companyId: string) {
+    const companies = loadCompanies();
+    const found = companies.find(c => c.id === companyId);
+    if (!found) throw new Error("Empresa não encontrada");
+    setActiveCompanyId(companyId);
+    return delay(found, 200);
+  },
   async accounts() { return delay(scenarioAccounts()); },
   async taxContext() { return delay(seedTax); },
   async periods() { return delay(seedPeriods); },
+};
+
+// ---- subscription (mock) ----
+const SUBSCRIPTION_KEY = "contta.subscription.plan";
+
+const planConfig = (plan: SubscriptionPlan): Subscription => {
+  if (plan === "essencial") {
+    return {
+      plan,
+      planLabel: "Essencial",
+      basePrice: 89,
+      addonPricePerCompany: 0,
+      includedCompanies: 1,
+      maxCompanies: 1,
+      status: "active",
+    };
+  }
+  if (plan === "profissional") {
+    return {
+      plan,
+      planLabel: "Profissional",
+      basePrice: 249,
+      addonPricePerCompany: 0,
+      includedCompanies: 3,
+      maxCompanies: 3,
+      status: "active",
+    };
+  }
+  return {
+    plan: "personalizavel",
+    planLabel: "Personalizável",
+    basePrice: 249,
+    addonPricePerCompany: 100,
+    includedCompanies: 1,
+    maxCompanies: Number.POSITIVE_INFINITY,
+    status: "active",
+  };
+};
+
+const loadPlan = (): SubscriptionPlan => {
+  if (typeof window === "undefined") return "profissional";
+  const raw = localStorage.getItem(SUBSCRIPTION_KEY) as SubscriptionPlan | null;
+  return raw && ["essencial", "profissional", "personalizavel"].includes(raw) ? raw : "profissional";
+};
+
+export const subscriptionRepo: SubscriptionRepo = {
+  async current() {
+    return delay(planConfig(loadPlan()));
+  },
+  async setPlan(plan) {
+    if (typeof window !== "undefined") localStorage.setItem(SUBSCRIPTION_KEY, plan);
+    return delay(planConfig(plan), 200);
+  },
 };
 
 // ---- fake auth ----

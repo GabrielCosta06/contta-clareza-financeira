@@ -250,6 +250,20 @@ export interface AIConversation {
   messages: AIMessage[];
 }
 
+// ============ Subscription / Billing ============
+export type SubscriptionPlan = "essencial" | "profissional" | "personalizavel";
+
+export interface Subscription {
+  plan: SubscriptionPlan;
+  planLabel: string;
+  basePrice: number;          // monthly base in BRL
+  addonPricePerCompany: number; // BRL per extra company
+  includedCompanies: number;   // companies included with the base price
+  maxCompanies: number;        // hard cap (Infinity for personalizavel)
+  status: "active" | "trial" | "past_due";
+  renewsAt?: string;
+}
+
 // ============ Tax (Brasil) ============
 export interface TaxContext {
   regime: Company["taxRegime"];

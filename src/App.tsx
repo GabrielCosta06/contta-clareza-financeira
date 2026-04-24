@@ -31,6 +31,7 @@ import { DRE, Custos, Orcamento, Precificacao } from "@/pages/app/MargemSubpages
 import Caixa, { CaixaLayout, Projecao, Recebiveis, Obrigacoes } from "@/pages/app/Caixa";
 import ContaAIApp from "@/pages/app/ContaAI";
 import Configuracoes from "@/pages/app/Configuracoes";
+import EmpresasSettings from "@/pages/app/EmpresasSettings";
 import WeeklyReadingExport from "@/pages/app/WeeklyReadingExport";
 import NotFound from "./pages/NotFound";
 
@@ -85,6 +86,7 @@ const App = () => (
                 </Route>
                 <Route path="ai" element={<ContaAIApp />} />
                 <Route path="configuracoes" element={<Configuracoes />} />
+                <Route path="configuracoes/empresas" element={<EmpresasSettings />} />
               </Route>
             </Route>
 

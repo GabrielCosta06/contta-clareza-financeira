@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -10,6 +10,7 @@ import {
   ChevronLeft,
   CreditCard,
   Landmark,
+  Lock,
   ReceiptText,
   Settings2,
   ShieldCheck,
@@ -17,8 +18,9 @@ import {
   Store,
 } from "lucide-react";
 
-import { authService } from "@/services";
+import { authService, companyRepo } from "@/services";
 import { useDemoScenario } from "@/hooks/useDemoScenario";
+import { useCompanies } from "@/hooks/useCompanies";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -34,6 +36,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/components/ui/sonner";
+import { brl } from "@/lib/format";
 import type { Company } from "@/domain/types";
 
 const onboardingSchema = z.object({
@@ -102,22 +105,67 @@ const initialValues: OnboardingValues = {
   sources: ["itau", "stone"],
 };
 
+const emptyValues: OnboardingValues = {
+  tradeName: "",
+  cnpj: "",
+  taxRegime: "Simples Nacional",
+  sources: [],
+};
+
 export default function Onboarding() {
-  const [step, setStep] = useState(0);
-  const [mode, setMode] = useState<"guided" | "demo">("guided");
+  const [searchParams] = useSearchParams();
+  const isNewCompany = searchParams.get("mode") === "new";
+  const { canAddCompany, subscription, companies, extraCompanies } = useCompanies();
   const navigate = useNavigate();
   const { setScenario } = useDemoScenario();
+
+  const [step, setStep] = useState(isNewCompany ? 1 : 0);
+  const [mode, setMode] = useState<"guided" | "demo">("guided");
+  const [submitting, setSubmitting] = useState(false);
   const form = useForm<OnboardingValues>({
     resolver: zodResolver(onboardingSchema),
-    defaultValues: initialValues,
+    defaultValues: isNewCompany ? emptyValues : initialValues,
     mode: "onTouched",
   });
+
+  // Block access to the new-company flow when the plan limit is reached.
+  useEffect(() => {
+    if (!isNewCompany) return;
+    if (subscription && !canAddCompany) {
+      toast.error("Limite do plano atingido", {
+        description: `O plano ${subscription.planLabel} permite até ${subscription.maxCompanies} empresa(s).`,
+      });
+      navigate("/app/configuracoes/empresas", { replace: true });
+    }
+  }, [isNewCompany, canAddCompany, subscription, navigate]);
 
   const pct = ((step + 1) / steps.length) * 100;
   const selectedSources = form.watch("sources");
   const values = form.getValues();
 
-  const finish = (nextMode: "guided" | "demo" = mode, nextSources = selectedSources) => {
+  const finish = async (nextMode: "guided" | "demo" = mode, nextSources = selectedSources) => {
+    if (isNewCompany) {
+      setSubmitting(true);
+      try {
+        const created = await companyRepo.create({
+          tradeName: values.tradeName,
+          cnpj: values.cnpj,
+          taxRegime: values.taxRegime,
+        });
+        toast.success("Empresa criada", {
+          description: `${created.tradeName} já é a empresa ativa. Configure as fontes em Configurações.`,
+        });
+        navigate("/app/dashboard");
+      } catch (e) {
+        toast.error("Não foi possível criar a empresa", {
+          description: e instanceof Error ? e.message : "Tente novamente em instantes.",
+        });
+      } finally {
+        setSubmitting(false);
+      }
+      return;
+    }
+
     authService.setOnboarded(true);
     setScenario(nextMode === "demo" ? "reliable" : nextSources.length > 0 ? "partial" : "empty");
     toast.success(nextMode === "demo" ? "Demo pronta para explorar" : "Configuração inicial concluída", {
@@ -131,6 +179,7 @@ export default function Onboarding() {
   const goToStep = (nextStep: number) => setStep(nextStep);
 
   const skipWithDemo = () => {
+    if (isNewCompany) return;
     const demoSources = ["itau", "stone", "csv"];
     setMode("demo");
     form.setValue("sources", demoSources);
@@ -146,7 +195,7 @@ export default function Onboarding() {
   };
 
   const continueFromSources = async () => {
-    if (selectedSources.length === 0) {
+    if (!isNewCompany && selectedSources.length === 0) {
       form.setError("sources", { message: "Selecione pelo menos uma fonte ou siga com a demo." });
       return;
     }
@@ -166,6 +215,17 @@ export default function Onboarding() {
     form.setValue("sources", next, { shouldTouch: true, shouldValidate: true });
     form.clearErrors("sources");
   };
+
+  const newCompanyAddonHint = useMemo(() => {
+    if (!isNewCompany || !subscription) return null;
+    if (subscription.addonPricePerCompany <= 0) return null;
+    // Adding this company would push us one over the included quota?
+    const willBeExtra = companies.length + 1 > subscription.includedCompanies;
+    if (!willBeExtra) return null;
+    const newExtra = extraCompanies + 1;
+    const newTotal = subscription.basePrice + newExtra * subscription.addonPricePerCompany;
+    return `Esta empresa adiciona ${brl(subscription.addonPricePerCompany)}/mês ao seu plano (total estimado: ${brl(newTotal)}/mês).`;
+  }, [isNewCompany, subscription, companies.length, extraCompanies]);
 
   const recapItems = [
     {
@@ -199,9 +259,14 @@ export default function Onboarding() {
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <p className="text-xs font-semibold uppercase tracking-wider text-primary">
-                Configuração inicial — etapa {step + 1} de {steps.length}
+                {isNewCompany ? "Nova empresa" : "Configuração inicial"} — etapa {step + 1} de {steps.length}
               </p>
-              <h1 className="mt-2 text-2xl sm:text-3xl font-semibold tracking-tight text-foreground">Prepare sua primeira leitura.</h1>
+              <h1 className="mt-2 text-2xl sm:text-3xl font-semibold tracking-tight text-foreground">
+                {isNewCompany ? "Adicionar uma nova empresa" : "Prepare sua primeira leitura."}
+              </h1>
+              {isNewCompany && newCompanyAddonHint && (
+                <p className="mt-2 text-sm text-muted-foreground">{newCompanyAddonHint}</p>
+              )}
             </div>
             <Badge variant="outline" className="bg-background/80">
               {steps[step]}
@@ -327,10 +392,17 @@ export default function Onboarding() {
                 </div>
 
                 <div className="mt-8 flex justify-between gap-2">
-                  <Button variant="ghost" onClick={() => goToStep(0)}>
-                    <ChevronLeft className="h-4 w-4" />
-                    Voltar
-                  </Button>
+                  {isNewCompany ? (
+                    <Button variant="ghost" onClick={() => navigate("/app/configuracoes/empresas")}>
+                      <ChevronLeft className="h-4 w-4" />
+                      Cancelar
+                    </Button>
+                  ) : (
+                    <Button variant="ghost" onClick={() => goToStep(0)}>
+                      <ChevronLeft className="h-4 w-4" />
+                      Voltar
+                    </Button>
+                  )}
                   <Button onClick={continueFromCompany}>
                     Continuar
                     <ArrowRight className="h-4 w-4" />
@@ -386,15 +458,24 @@ export default function Onboarding() {
               )}
 
               <div className="mt-8 flex flex-col gap-3 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                  <p className="text-sm font-medium text-foreground">Quer pular esta etapa?</p>
-                  <p className="text-xs text-muted-foreground">Você entra com a demo confiável e conecta dados reais depois.</p>
-                </div>
+                {isNewCompany ? (
+                  <p className="text-xs text-muted-foreground">
+                    <Lock className="mr-1 inline h-3 w-3" />
+                    Você poderá conectar bancos e maquininha desta nova empresa em Configurações depois.
+                  </p>
+                ) : (
+                  <div>
+                    <p className="text-sm font-medium text-foreground">Quer pular esta etapa?</p>
+                    <p className="text-xs text-muted-foreground">Você entra com a demo confiável e conecta dados reais depois.</p>
+                  </div>
+                )}
                 <div className="flex gap-2">
-                  <Button variant="outline" onClick={skipWithDemo}>
-                    <Sparkles className="h-4 w-4" />
-                    Seguir com demo
-                  </Button>
+                  {!isNewCompany && (
+                    <Button variant="outline" onClick={skipWithDemo}>
+                      <Sparkles className="h-4 w-4" />
+                      Seguir com demo
+                    </Button>
+                  )}
                   <Button onClick={continueFromSources}>
                     Revisar configuração
                     <ArrowRight className="h-4 w-4" />
@@ -432,21 +513,27 @@ export default function Onboarding() {
               </div>
 
               <div className="mt-6 rounded-xl border border-primary/20 bg-primary-soft/40 p-4">
-                <p className="text-xs font-medium uppercase tracking-wider text-primary">Modo de entrada</p>
+                <p className="text-xs font-medium uppercase tracking-wider text-primary">
+                  {isNewCompany ? "Nova empresa" : "Modo de entrada"}
+                </p>
                 <p className="mt-1 text-sm text-foreground">
-                  {mode === "demo"
-                    ? "Você vai abrir com dados de exemplo completos para explorar todas as leituras."
-                    : "Você vai abrir com uma leitura inicial baseada nas fontes escolhidas nesta configuração."}
+                  {isNewCompany
+                    ? `${values.tradeName} será criada e definida como empresa ativa. ${newCompanyAddonHint ?? ""}`.trim()
+                    : mode === "demo"
+                      ? "Você vai abrir com dados de exemplo completos para explorar todas as leituras."
+                      : "Você vai abrir com uma leitura inicial baseada nas fontes escolhidas nesta configuração."}
                 </p>
               </div>
 
               <div className="mt-8 flex justify-between gap-2">
-                <Button variant="ghost" onClick={() => goToStep(2)}>
+                <Button variant="ghost" onClick={() => goToStep(2)} disabled={submitting}>
                   <ChevronLeft className="h-4 w-4" />
                   Voltar
                 </Button>
-                <Button onClick={() => finish()}>
-                  Abrir minha visão geral
+                <Button onClick={() => finish()} disabled={submitting}>
+                  {isNewCompany
+                    ? submitting ? "Criando..." : "Criar empresa"
+                    : "Abrir minha visão geral"}
                   <ArrowRight className="h-4 w-4" />
                 </Button>
               </div>
