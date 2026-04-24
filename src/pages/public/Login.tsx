@@ -11,7 +11,7 @@ export default function Login() {
   const navigate = useNavigate();
   const location = useLocation() as any;
   const { toast } = useToast();
-  const [email, setEmail] = useState("marina@estrelacafe.com.br");
+  const [email, setEmail] = useState("nati@estrelacafe.com.br");
   const [password, setPassword] = useState("contta2024");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
