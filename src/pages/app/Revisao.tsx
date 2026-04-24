@@ -6,7 +6,7 @@ import { reviewRepo } from "@/services";
 import { PageHeader } from "@/components/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ConfidenceBadge } from "@/components/ConfidenceBadge";
+import { DataTrustBanner } from "@/components/DataTrustBanner";
 import { EmptyState } from "@/components/EmptyState";
 import { dateBR } from "@/lib/format";
 import { toast } from "@/components/ui/sonner";
@@ -65,8 +65,9 @@ export default function Revisao() {
         eyebrow="Centro de confiança nos números"
         title="Revisão"
         subtitle="O que pode mudar o resultado do fechamento, em ordem de impacto."
-        actions={<ConfidenceBadge level={conf} />}
       />
+
+      <DataTrustBanner level={conf} />
 
       <div className="grid gap-4 sm:grid-cols-3">
         <div className="rounded-lg border border-destructive/20 bg-destructive-soft p-4">

@@ -8,7 +8,7 @@ import { marginRepo } from "@/services";
 import { useDemoScenario } from "@/hooks/useDemoScenario";
 import { PageHeader } from "@/components/PageHeader";
 import { StatCard } from "@/components/StatCard";
-import { ConfidenceBadge } from "@/components/ConfidenceBadge";
+import { DataTrustBanner } from "@/components/DataTrustBanner";
 import { AIInsightCard } from "@/components/AIInsightCard";
 import { InlineAIEntryPoint } from "@/components/InlineAIEntryPoint";
 import { Button } from "@/components/ui/button";
@@ -99,6 +99,8 @@ export default function Margem() {
 
   return (
     <div className="space-y-6">
+      <DataTrustBanner level={margin.confidence} />
+
       <div className="grid gap-4 md:grid-cols-3">
         <StatCard
           label="Receita"
@@ -122,9 +124,8 @@ export default function Margem() {
 
       <div className="grid gap-4 lg:grid-cols-3">
         <div className="lg:col-span-2 rounded-lg border border-border bg-card p-5">
-          <div className="mb-4 flex items-center justify-between">
+          <div className="mb-4">
             <h2 className="font-semibold">Receita vs. custo — últimas 8 semanas</h2>
-            <ConfidenceBadge level={margin.confidence} />
           </div>
           <div className="h-72 -ml-2" role="img" aria-labelledby="margin-chart-title" aria-describedby="margin-chart-description">
             <p id="margin-chart-title" className="sr-only">Gráfico de receita e custo das últimas oito semanas</p>
@@ -153,7 +154,6 @@ export default function Margem() {
         <AIInsightCard
           title="Leitura do Contta AI"
           summary="A pressão sobre margem vem majoritariamente do lado dos custos, não do volume de vendas."
-          confidence={margin.confidence}
           details={[
             "Insumos +18% indicam renegociação prioritária.",
             "Energia +12% pede revisão de contrato ou consumo.",

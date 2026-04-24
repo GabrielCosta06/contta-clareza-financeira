@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { marginRepo } from "@/services";
-import { ConfidenceBadge } from "@/components/ConfidenceBadge";
+
 import { formatBRL, pct } from "@/lib/format";
 import { Delta } from "@/components/Delta";
 import { cn } from "@/lib/utils";
@@ -22,7 +22,6 @@ export function DRE() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <ConfidenceBadge level={data.confidence} />
           <Button asChild variant="outline" size="sm">
             <Link to="/app/ai"><Sparkles className="h-4 w-4" /> Perguntar sobre uma linha</Link>
           </Button>

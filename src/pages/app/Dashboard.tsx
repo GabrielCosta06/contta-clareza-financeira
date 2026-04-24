@@ -19,7 +19,7 @@ import { useDemoScenario, SCENARIO_LABELS } from "@/hooks/useDemoScenario";
 import { PageHeader } from "@/components/PageHeader";
 import { StatCard } from "@/components/StatCard";
 import { AIInsightCard } from "@/components/AIInsightCard";
-import { ConfidenceBadge } from "@/components/ConfidenceBadge";
+import { DataTrustBanner } from "@/components/DataTrustBanner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ChartSkeleton } from "@/components/skeletons/ChartSkeleton";
@@ -259,6 +259,8 @@ export default function Dashboard() {
         }
       />
 
+      <DataTrustBanner level={margin?.confidence ?? cash?.confidence ?? "no-data"} />
+
       <section className={`rounded-2xl border p-6 shadow-card ${heroStyles[recommendedAction.tone]}`}>
         <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-3xl">
@@ -269,9 +271,6 @@ export default function Dashboard() {
               <Badge variant="secondary" className="bg-background/70 text-foreground">
                 Cenário: {SCENARIO_LABELS[scenario]}
               </Badge>
-              {(margin?.confidence || cash?.confidence) && (
-                <ConfidenceBadge level={margin?.confidence ?? cash?.confidence ?? "no-data"} />
-              )}
             </div>
 
             <h2 className="mt-4 text-2xl font-semibold tracking-tight text-foreground lg:text-3xl">
@@ -346,15 +345,12 @@ export default function Dashboard() {
             hint={margin ? `${formatBRL(margin.grossMargin)} sobre ${formatBRL(margin.revenue)}` : "Sem dados de margem ainda"}
             emphasis={margin ? "warning" : "default"}
             footer={
-              <div className="flex items-center justify-between gap-2">
-                {margin && <ConfidenceBadge level={margin.confidence} />}
-                <Button asChild variant="ghost" size="sm" className="-mr-2 text-primary">
-                  <Link to="/app/margem">
-                    Abrir margem
-                    <ArrowRight className="h-3.5 w-3.5" />
-                  </Link>
-                </Button>
-              </div>
+              <Button asChild variant="ghost" size="sm" className="-mr-2 text-primary">
+                <Link to="/app/margem">
+                  Abrir margem
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              </Button>
             }
           />
 
@@ -368,15 +364,12 @@ export default function Dashboard() {
             }
             emphasis={cash?.riskLevel === "tight" || cash?.riskLevel === "critical" ? "destructive" : "default"}
             footer={
-              <div className="flex items-center justify-between gap-2">
-                {cash && <ConfidenceBadge level={cash.confidence} />}
-                <Button asChild variant="ghost" size="sm" className="-mr-2 text-primary">
-                  <Link to="/app/caixa">
-                    Abrir caixa
-                    <ArrowRight className="h-3.5 w-3.5" />
-                  </Link>
-                </Button>
-              </div>
+              <Button asChild variant="ghost" size="sm" className="-mr-2 text-primary">
+                <Link to="/app/caixa">
+                  Abrir caixa
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              </Button>
             }
           />
 
@@ -428,7 +421,6 @@ export default function Dashboard() {
               <h2 className="font-semibold">Projeção de caixa — próximos 30 dias</h2>
               <p className="text-sm text-muted-foreground">Saldo projetado considerando recebíveis e obrigações.</p>
             </div>
-            {cash && <ConfidenceBadge level={cash.confidence} />}
           </div>
           {projLoading ? (
             <ChartSkeleton height="h-56" />
@@ -479,7 +471,6 @@ export default function Dashboard() {
 
         <AIInsightCard
           summary="A próxima decisão financeira mudou de prioridade: primeiro proteja o caixa e a confiança da base, depois ajuste margem e preço."
-          confidence={cash?.confidence ?? margin?.confidence ?? "with-caveats"}
           details={[
             critical.length > 0
               ? `${critical.length} itens críticos ainda podem alterar esta leitura.`

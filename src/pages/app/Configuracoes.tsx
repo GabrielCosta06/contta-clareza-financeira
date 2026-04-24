@@ -24,27 +24,27 @@ export default function Configuracoes() {
       <PageHeader title="Configurações" subtitle="Ajustes da empresa, conexões e preferências da sua leitura semanal." />
 
       <div className="grid md:grid-cols-2 gap-4">
-        <div className="rounded-lg border border-border bg-card p-5">
+        <div className="rounded-lg border border-border bg-card p-5 transition-colors hover:border-border/80">
           <div className="flex items-center gap-3 mb-4"><Building2 className="h-5 w-5 text-primary" /><h2 className="font-semibold">Empresa atual</h2></div>
           <dl className="space-y-2 text-sm">
-            <div className="flex justify-between"><dt className="text-muted-foreground">Nome fantasia</dt><dd className="font-medium">{company?.tradeName}</dd></div>
-            <div className="flex justify-between"><dt className="text-muted-foreground">Razão social</dt><dd className="font-medium">{company?.legalName}</dd></div>
-            <div className="flex justify-between"><dt className="text-muted-foreground">CNPJ</dt><dd className="font-medium num">{company?.cnpj}</dd></div>
-            <div className="flex justify-between"><dt className="text-muted-foreground">Regime</dt><dd className="font-medium">{company?.taxRegime}</dd></div>
-            <div className="flex justify-between"><dt className="text-muted-foreground">Segmento</dt><dd className="font-medium">{company?.segment}</dd></div>
+            <div className="flex justify-between gap-3"><dt className="text-muted-foreground">Nome fantasia</dt><dd className="font-medium truncate">{company?.tradeName}</dd></div>
+            <div className="flex justify-between gap-3"><dt className="text-muted-foreground">Razão social</dt><dd className="font-medium truncate">{company?.legalName}</dd></div>
+            <div className="flex justify-between gap-3"><dt className="text-muted-foreground">CNPJ</dt><dd className="font-medium num">{company?.cnpj}</dd></div>
+            <div className="flex justify-between gap-3"><dt className="text-muted-foreground">Regime</dt><dd className="font-medium">{company?.taxRegime}</dd></div>
+            <div className="flex justify-between gap-3"><dt className="text-muted-foreground">Segmento</dt><dd className="font-medium truncate">{company?.segment}</dd></div>
           </dl>
         </div>
 
-        <div className="rounded-lg border border-border bg-card p-5">
+        <div className="rounded-lg border border-border bg-card p-5 transition-colors hover:border-border/80">
           <div className="flex items-center gap-3 mb-4"><Link2 className="h-5 w-5 text-primary" /><h2 className="font-semibold">Contas conectadas</h2></div>
           <ul className="space-y-3">
             {accounts.map(a => (
-              <li key={a.id} className="flex items-center justify-between text-sm">
-                <div>
-                  <p className="font-medium">{a.name}</p>
+              <li key={a.id} className="flex items-center justify-between gap-3 text-sm">
+                <div className="min-w-0">
+                  <p className="font-medium truncate">{a.name}</p>
                   <p className="text-xs text-muted-foreground">{a.lastSyncAt ? `Última sincronização: ${dateBR(a.lastSyncAt)}` : "—"}</p>
                 </div>
-                <Badge variant={a.status === "connected" ? "outline" : a.status === "pending" ? "secondary" : "destructive"} className="text-[10px]">{a.status === "connected" ? "Conectada" : a.status === "pending" ? "Pendente" : "Erro"}</Badge>
+                <Badge variant={a.status === "connected" ? "outline" : a.status === "pending" ? "secondary" : "destructive"} className="shrink-0 text-[10px]">{a.status === "connected" ? "Conectada" : a.status === "pending" ? "Pendente" : "Erro"}</Badge>
               </li>
             ))}
           </ul>
@@ -52,11 +52,19 @@ export default function Configuracoes() {
         </div>
 
         {sections.slice(2).map(s => (
-          <div key={s.t} className="rounded-lg border border-border bg-card p-5">
-            <div className="flex items-center gap-3 mb-2"><s.Icon className="h-5 w-5 text-primary" /><h2 className="font-semibold">{s.t}</h2></div>
+          <button
+            type="button"
+            key={s.t}
+            className="group rounded-lg border border-border bg-card p-5 text-left transition-all hover:border-primary/30 hover:shadow-card"
+          >
+            <div className="flex items-center gap-3 mb-2">
+              <div className="grid h-8 w-8 place-items-center rounded-md bg-primary-soft text-primary transition-transform group-hover:scale-110">
+                <s.Icon className="h-4 w-4" />
+              </div>
+              <h2 className="font-semibold">{s.t}</h2>
+            </div>
             <p className="text-sm text-muted-foreground">{s.d}</p>
-            <Button size="sm" variant="ghost" className="mt-3 -ml-3 text-primary">Abrir</Button>
-          </div>
+          </button>
         ))}
       </div>
     </div>

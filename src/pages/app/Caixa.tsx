@@ -18,7 +18,7 @@ import { cashRepo } from "@/services";
 import { useDemoScenario } from "@/hooks/useDemoScenario";
 import { PageHeader } from "@/components/PageHeader";
 import { StatCard } from "@/components/StatCard";
-import { ConfidenceBadge } from "@/components/ConfidenceBadge";
+import { DataTrustBanner } from "@/components/DataTrustBanner";
 import { AIInsightCard } from "@/components/AIInsightCard";
 import { InlineAIEntryPoint } from "@/components/InlineAIEntryPoint";
 import { Badge } from "@/components/ui/badge";
@@ -120,6 +120,8 @@ export default function Caixa() {
 
   return (
     <div className="space-y-6">
+      <DataTrustBanner level={cash.confidence} />
+
       <div className="grid gap-4 md:grid-cols-3">
         <StatCard
           label="Saldo atual"
@@ -142,15 +144,13 @@ export default function Caixa() {
 
       <div className="grid gap-4 lg:grid-cols-3">
         <div className="lg:col-span-2 rounded-lg border border-border bg-card p-5">
-          <div className="mb-4 flex items-center justify-between">
+          <div className="mb-4">
             <h2 className="font-semibold">Projeção de 30 dias</h2>
-            <ConfidenceBadge level={cash.confidence} />
           </div>
           <ProjectionChart />
         </div>
         <AIInsightCard
           summary="Sem ação, o caixa pode ficar negativo em ~19 dias devido à concentração de obrigações entre dias 7 e 14."
-          confidence={cash.confidence}
           details={[
             "Cobrar Restaurante Lume (R$ 4.280, em atraso).",
             "Antecipar repasse Stone (R$ 18,4 mil) reduz o aperto.",
