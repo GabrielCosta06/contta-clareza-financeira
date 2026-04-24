@@ -259,9 +259,14 @@ export default function Onboarding() {
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <p className="text-xs font-semibold uppercase tracking-wider text-primary">
-                Configuração inicial — etapa {step + 1} de {steps.length}
+                {isNewCompany ? "Nova empresa" : "Configuração inicial"} — etapa {step + 1} de {steps.length}
               </p>
-              <h1 className="mt-2 text-2xl sm:text-3xl font-semibold tracking-tight text-foreground">Prepare sua primeira leitura.</h1>
+              <h1 className="mt-2 text-2xl sm:text-3xl font-semibold tracking-tight text-foreground">
+                {isNewCompany ? "Adicionar uma nova empresa" : "Prepare sua primeira leitura."}
+              </h1>
+              {isNewCompany && newCompanyAddonHint && (
+                <p className="mt-2 text-sm text-muted-foreground">{newCompanyAddonHint}</p>
+              )}
             </div>
             <Badge variant="outline" className="bg-background/80">
               {steps[step]}
