@@ -16,9 +16,21 @@ export interface NewCompanyInput {
   taxRegime: Company["taxRegime"];
 }
 
+export interface NewTransactionInput {
+  date: string;
+  description: string;
+  counterparty?: string;
+  amount: number;
+  direction: Transaction["direction"];
+  categoryId?: string;
+  accountId?: string;
+  notes?: string;
+}
+
 export interface TransactionsRepo {
   list(query?: { search?: string; status?: string; categoryId?: string }): Promise<Transaction[]>;
   get(id: string): Promise<Transaction | null>;
+  create(input: NewTransactionInput): Promise<Transaction>;
   update(id: string, patch: Partial<Transaction>): Promise<Transaction>;
   importFile(file: File): Promise<ImportJob>;
 }

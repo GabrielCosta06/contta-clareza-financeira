@@ -162,16 +162,38 @@ export const transactionsRepo: TransactionsRepo = {
     Object.assign(tx, patch);
     return delay({ ...tx });
   },
-  async importFile() {
+  async create(input) {
+    const tx: Transaction = {
+      id: `tx_${crypto.randomUUID().slice(0, 8)}`,
+      companyId: seedCompany.id,
+      date: input.date,
+      description: input.description,
+      counterparty: input.counterparty,
+      amount: input.amount,
+      direction: input.direction,
+      categoryId: input.categoryId,
+      accountId: input.accountId || seedAccounts[0]?.id || "acc_itau",
+      source: "manual",
+      reviewStatus: input.categoryId ? "reviewed" : "needs-categorization",
+      evidenceCount: 0,
+      notes: input.notes,
+    };
+    seedTransactions.unshift(tx);
+    return delay(tx, 350);
+  },
+  async importFile(file) {
+    const total = 142;
+    const imported = Math.max(80, total - Math.floor(Math.random() * 12));
     return delay({
       id: crypto.randomUUID(),
       source: "csv" as const,
+      fileName: file?.name,
       startedAt: new Date().toISOString(),
       finishedAt: new Date().toISOString(),
       status: "succeeded" as const,
-      rowsTotal: 142,
-      rowsImported: 138,
-    });
+      rowsTotal: total,
+      rowsImported: imported,
+    }, 700);
   },
 };
 

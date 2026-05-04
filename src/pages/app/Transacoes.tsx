@@ -15,6 +15,8 @@ import { DataTable, type DataTableColumn } from "@/components/DataTable";
 import { TableSkeleton } from "@/components/skeletons/TableSkeleton";
 import { useDemoScenario } from "@/hooks/useDemoScenario";
 import type { Transaction } from "@/domain/types";
+import { TransactionFormDialog } from "@/components/transactions/TransactionFormDialog";
+import { ImportDialog } from "@/components/transactions/ImportDialog";
 
 type BadgeVariant = ComponentProps<typeof Badge>["variant"];
 
@@ -30,6 +32,8 @@ export default function Transacoes() {
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("all");
   const [cat, setCat] = useState("all");
+  const [createOpen, setCreateOpen] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
   const navigate = useNavigate();
   const { data = [], isLoading } = useQuery({
     queryKey: ["transactions", search, status, cat],
@@ -95,8 +99,8 @@ export default function Transacoes() {
         subtitle="Tudo o que entrou e saiu, organizado para virar leitura."
         actions={
           <>
-            <Button variant="outline" size="sm"><Upload className="h-4 w-4" /> Importar</Button>
-            <Button size="sm"><Plus className="h-4 w-4" /> Nova transação</Button>
+            <Button variant="outline" size="sm" onClick={() => setImportOpen(true)}><Upload className="h-4 w-4" /> Importar</Button>
+            <Button size="sm" onClick={() => setCreateOpen(true)}><Plus className="h-4 w-4" /> Nova transação</Button>
           </>
         }
       />
@@ -138,7 +142,7 @@ export default function Transacoes() {
               icon={<Receipt className="h-5 w-5" />}
               title="Nada por aqui ainda"
               description="Quando você importar ou conectar dados, as transações aparecem aqui categorizadas e prontas para a leitura."
-              action={<Button size="sm"><Upload className="h-4 w-4" /> Importar agora</Button>}
+              action={<Button size="sm" onClick={() => setImportOpen(true)}><Upload className="h-4 w-4" /> Importar agora</Button>}
               secondaryAction={
                 <Button type="button" variant="outline" size="sm" onClick={() => setScenario("reliable")}>
                   Ver dados de exemplo
@@ -151,6 +155,9 @@ export default function Transacoes() {
       {!isLoading && data.length > 0 && (
         <p className="text-xs text-muted-foreground">{data.length} transações · Fonte: bancos, maquininha e lançamentos manuais.</p>
       )}
+
+      <TransactionFormDialog open={createOpen} onOpenChange={setCreateOpen} />
+      <ImportDialog open={importOpen} onOpenChange={setImportOpen} />
     </div>
   );
 }
