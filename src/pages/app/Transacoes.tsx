@@ -32,6 +32,8 @@ export default function Transacoes() {
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("all");
   const [cat, setCat] = useState("all");
+  const [createOpen, setCreateOpen] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
   const navigate = useNavigate();
   const { data = [], isLoading } = useQuery({
     queryKey: ["transactions", search, status, cat],
@@ -97,8 +99,8 @@ export default function Transacoes() {
         subtitle="Tudo o que entrou e saiu, organizado para virar leitura."
         actions={
           <>
-            <Button variant="outline" size="sm"><Upload className="h-4 w-4" /> Importar</Button>
-            <Button size="sm"><Plus className="h-4 w-4" /> Nova transação</Button>
+            <Button variant="outline" size="sm" onClick={() => setImportOpen(true)}><Upload className="h-4 w-4" /> Importar</Button>
+            <Button size="sm" onClick={() => setCreateOpen(true)}><Plus className="h-4 w-4" /> Nova transação</Button>
           </>
         }
       />
