@@ -15,6 +15,8 @@ import { DataTable, type DataTableColumn } from "@/components/DataTable";
 import { TableSkeleton } from "@/components/skeletons/TableSkeleton";
 import { useDemoScenario } from "@/hooks/useDemoScenario";
 import type { Transaction } from "@/domain/types";
+import { TransactionFormDialog } from "@/components/transactions/TransactionFormDialog";
+import { ImportDialog } from "@/components/transactions/ImportDialog";
 
 type BadgeVariant = ComponentProps<typeof Badge>["variant"];
 
