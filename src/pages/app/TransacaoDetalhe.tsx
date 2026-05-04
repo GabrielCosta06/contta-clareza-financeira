@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, Check, Edit } from "lucide-react";
 
 import { transactionsRepo, categoriesRepo } from "@/services";
@@ -9,14 +10,38 @@ import { brl, dateBR } from "@/lib/format";
 import { AIInsightCard } from "@/components/AIInsightCard";
 import { Badge } from "@/components/ui/badge";
 import { InlineAIEntryPoint } from "@/components/InlineAIEntryPoint";
+import { TransactionFormDialog } from "@/components/transactions/TransactionFormDialog";
+import { toast } from "@/components/ui/sonner";
+
+const statusLabels: Record<string, string> = {
+  reviewed: "Revisado",
+  pending: "Pendente",
+  "needs-categorization": "Sem categoria",
+  "needs-evidence": "Sem comprovante",
+};
 
 export default function TransacaoDetalhe() {
   const { id } = useParams();
+  const qc = useQueryClient();
+  const [editOpen, setEditOpen] = useState(false);
   const { data: tx } = useQuery({ queryKey: ["tx", id], queryFn: () => transactionsRepo.get(id!), enabled: !!id });
   const { data: cats = [] } = useQuery({ queryKey: ["cats"], queryFn: () => categoriesRepo.list() });
   const cat = cats.find((category) => category.id === tx?.categoryId);
 
+  const markReviewed = useMutation({
+    mutationFn: () => transactionsRepo.update(tx!.id, { reviewStatus: "reviewed" }),
+    onSuccess: () => {
+      toast.success("Marcado como revisado.");
+      qc.invalidateQueries({ queryKey: ["tx", id] });
+      qc.invalidateQueries({ queryKey: ["transactions"] });
+      qc.invalidateQueries({ queryKey: ["review"] });
+    },
+    onError: (err: Error) => toast.error("Não foi possível marcar.", { description: err.message }),
+  });
+
   if (!tx) return <div className="text-sm text-muted-foreground">Carregando…</div>;
+
+  const isReviewed = tx.reviewStatus === "reviewed";
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -33,13 +58,13 @@ export default function TransacaoDetalhe() {
         subtitle={tx.counterparty}
         actions={
           <>
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" onClick={() => setEditOpen(true)}>
               <Edit className="h-4 w-4" />
               Editar
             </Button>
-            <Button size="sm">
+            <Button size="sm" disabled={isReviewed || markReviewed.isPending} onClick={() => markReviewed.mutate()}>
               <Check className="h-4 w-4" />
-              Marcar revisado
+              {isReviewed ? "Revisado" : markReviewed.isPending ? "Salvando…" : "Marcar revisado"}
             </Button>
           </>
         }
@@ -70,13 +95,19 @@ export default function TransacaoDetalhe() {
             <div>
               <p className="text-xs uppercase tracking-wider text-muted-foreground">Status de revisão</p>
               <div className="mt-1">
-                <Badge variant="secondary">{tx.reviewStatus}</Badge>
+                <Badge variant="secondary">{statusLabels[tx.reviewStatus] ?? tx.reviewStatus}</Badge>
               </div>
             </div>
             <div>
               <p className="text-xs uppercase tracking-wider text-muted-foreground">Comprovantes</p>
               <p className="mt-1 font-medium">{tx.evidenceCount}</p>
             </div>
+            {tx.notes && (
+              <div className="col-span-2">
+                <p className="text-xs uppercase tracking-wider text-muted-foreground">Observações</p>
+                <p className="mt-1 text-sm text-foreground">{tx.notes}</p>
+              </div>
+            )}
           </div>
         </div>
         <AIInsightCard
@@ -93,6 +124,8 @@ export default function TransacaoDetalhe() {
       </div>
 
       <InlineAIEntryPoint prompt={`Analise a transação "${tx.description}" e diga o que merece atenção nesta tela.`} />
+
+      <TransactionFormDialog open={editOpen} onOpenChange={setEditOpen} transaction={tx} />
     </div>
   );
 }
