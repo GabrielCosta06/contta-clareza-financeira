@@ -16,7 +16,7 @@ import {
   X,
 } from "lucide-react";
 
-import { reviewRepo, transactionsRepo } from "@/services";
+import { reviewRepo } from "@/services";
 import { PageHeader } from "@/components/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
