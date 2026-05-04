@@ -142,7 +142,7 @@ export default function Transacoes() {
               icon={<Receipt className="h-5 w-5" />}
               title="Nada por aqui ainda"
               description="Quando você importar ou conectar dados, as transações aparecem aqui categorizadas e prontas para a leitura."
-              action={<Button size="sm"><Upload className="h-4 w-4" /> Importar agora</Button>}
+              action={<Button size="sm" onClick={() => setImportOpen(true)}><Upload className="h-4 w-4" /> Importar agora</Button>}
               secondaryAction={
                 <Button type="button" variant="outline" size="sm" onClick={() => setScenario("reliable")}>
                   Ver dados de exemplo
@@ -155,6 +155,9 @@ export default function Transacoes() {
       {!isLoading && data.length > 0 && (
         <p className="text-xs text-muted-foreground">{data.length} transações · Fonte: bancos, maquininha e lançamentos manuais.</p>
       )}
+
+      <TransactionFormDialog open={createOpen} onOpenChange={setCreateOpen} />
+      <ImportDialog open={importOpen} onOpenChange={setImportOpen} />
     </div>
   );
 }
