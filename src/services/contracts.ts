@@ -42,6 +42,7 @@ export interface CategoriesRepo {
 export interface ReviewRepo {
   queue(): Promise<ReviewItem[]>;
   resolve(id: string): Promise<void>;
+  dismiss(id: string, reason?: string): Promise<void>;
 }
 
 export interface MarginRepo {

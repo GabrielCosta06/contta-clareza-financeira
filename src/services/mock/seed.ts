@@ -75,24 +75,24 @@ const t = (over: Partial<Transaction>): Transaction => {
 export const seedTransactions: Transaction[] = [
   t({ date: daysAgo(0), description: "Stone — repasse vendas", counterparty: "Stone", amount: 4820.40, direction: "in", categoryId: "cat_rev_balcao", accountId: "acc_itau", source: "bank" }),
   t({ date: daysAgo(0), description: "iFood repasse", counterparty: "iFood", amount: 1230.00, direction: "in", categoryId: "cat_rev_delivery", accountId: "acc_inter", source: "bank" }),
-  t({ date: daysAgo(1), description: "Sacolão Central — frutas", counterparty: "Sacolão Central", amount: 612.30, direction: "out", categoryId: "cat_cogs_insumos", source: "bank", reviewStatus: "needs-evidence", evidenceCount: 0 }),
-  t({ date: daysAgo(1), description: "Pagamento PIX — fornecedor café", counterparty: "Café Serra Mantiqueira", amount: 1980.00, direction: "out", source: "bank", reviewStatus: "needs-categorization", evidenceCount: 0 }),
+  t({ id: "tx_sac", date: daysAgo(1), description: "Sacolão Central — frutas", counterparty: "Sacolão Central", amount: 612.30, direction: "out", categoryId: "cat_cogs_insumos", source: "bank", reviewStatus: "needs-evidence", evidenceCount: 0 }),
+  t({ id: "tx_cafe_pix", date: daysAgo(1), description: "Pagamento PIX — fornecedor café", counterparty: "Café Serra Mantiqueira", amount: 1980.00, direction: "out", source: "bank", reviewStatus: "needs-categorization", evidenceCount: 0 }),
   t({ date: daysAgo(2), description: "Conta de luz", counterparty: "Enel", amount: 1742.90, direction: "out", categoryId: "cat_op_energia", source: "bank" }),
   t({ date: daysAgo(2), description: "Folha — quinzenal", counterparty: "Folha 1ª quinzena", amount: 18230.00, direction: "out", categoryId: "cat_pessoal_folha", source: "manual" }),
   t({ date: daysAgo(3), description: "Aluguel loja matriz", counterparty: "Imobiliária Vergueiro", amount: 8200.00, direction: "out", categoryId: "cat_op_aluguel", source: "bank" }),
-  t({ date: daysAgo(3), description: "Repasse maquininha — débito", counterparty: "Stone", amount: 3120.55, direction: "in", categoryId: "cat_rev_balcao", source: "erp" }),
+  t({ id: "tx_stone_dup", date: daysAgo(3), description: "Repasse maquininha — débito", counterparty: "Stone", amount: 3120.55, direction: "in", categoryId: "cat_rev_balcao", source: "erp" }),
   t({ date: daysAgo(4), description: "Embalagens — caixas e copos", counterparty: "Embalagens SP", amount: 845.20, direction: "out", categoryId: "cat_cogs_embalagem", source: "bank" }),
   t({ date: daysAgo(5), description: "Taxa maquininha", counterparty: "Stone", amount: 312.40, direction: "out", categoryId: "cat_fin_maquininha", source: "bank" }),
   t({ date: daysAgo(6), description: "Venda atacado — Hotel Praça", counterparty: "Hotel Praça", amount: 6420.00, direction: "in", categoryId: "cat_rev_atacado", source: "manual" }),
   t({ date: daysAgo(7), description: "Marketing — Instagram Ads", counterparty: "Meta", amount: 480.00, direction: "out", categoryId: "cat_op_marketing", source: "bank" }),
-  t({ date: daysAgo(8), description: "Pagamento desconhecido", counterparty: "—", amount: 1240.00, direction: "out", source: "bank", reviewStatus: "needs-categorization", evidenceCount: 0 }),
-  t({ date: daysAgo(9), description: "DAS — Simples", counterparty: "Receita Federal", amount: 4820.00, direction: "out", categoryId: "cat_imp_simples", source: "bank", taxRelevant: true }),
+  t({ id: "tx_unknown", date: daysAgo(8), description: "Pagamento desconhecido", counterparty: "—", amount: 1240.00, direction: "out", source: "bank", reviewStatus: "needs-categorization", evidenceCount: 0 }),
+  t({ id: "tx_das", date: daysAgo(9), description: "DAS — Simples", counterparty: "Receita Federal", amount: 4820.00, direction: "out", categoryId: "cat_imp_simples", source: "bank", taxRelevant: true }),
   t({ date: daysAgo(10), description: "Repasse iFood", counterparty: "iFood", amount: 2410.00, direction: "in", categoryId: "cat_rev_delivery", source: "bank" }),
   t({ date: daysAgo(12), description: "Insumos — laticínios", counterparty: "Laticínios Vale Verde", amount: 1820.00, direction: "out", categoryId: "cat_cogs_insumos", source: "bank" }),
   t({ date: daysAgo(14), description: "Folha — 2ª quinzena (anterior)", counterparty: "Folha", amount: 17980.00, direction: "out", categoryId: "cat_pessoal_folha", source: "manual" }),
   t({ date: daysAgo(15), description: "SaaS — sistema PDV", counterparty: "ConnectPDV", amount: 389.00, direction: "out", categoryId: "cat_op_software", source: "bank" }),
   t({ date: daysAgo(18), description: "Recebimento atacado — Restaurante Lume", counterparty: "Restaurante Lume", amount: 4280.00, direction: "in", categoryId: "cat_rev_atacado", source: "manual" }),
-  t({ date: daysAgo(21), description: "Compra equipamento — moedor", counterparty: "Equip Café", amount: 3200.00, direction: "out", source: "bank", reviewStatus: "needs-categorization" }),
+  t({ id: "tx_moedor", date: daysAgo(21), description: "Compra equipamento — moedor", counterparty: "Equip Café", amount: 3200.00, direction: "out", source: "bank", reviewStatus: "needs-categorization" }),
 ];
 
 // ---- review queue ----
@@ -100,8 +100,8 @@ export const seedReview: ReviewItem[] = [
   { id: "rv_1", kind: "uncategorized", severity: "critical", title: "4 transações sem categoria", description: "R$ 6.640 em saídas sem categoria nos últimos 30 dias.", impact: "Sem categorização, a margem por linha de receita pode estar subestimada.", createdAt: daysAgo(1) },
   { id: "rv_2", kind: "missing-evidence", severity: "medium", title: "Saída de R$ 612,30 sem comprovante", description: "Sacolão Central — registrada no extrato mas sem nota anexada.", impact: "Pode prejudicar conciliação fiscal no fechamento mensal.", transactionId: "tx_sac", createdAt: daysAgo(1) },
   { id: "rv_3", kind: "amount-anomaly", severity: "medium", title: "Aumento de 38% em insumos vs média", description: "Compras de insumos saltaram acima do histórico das últimas 8 semanas.", impact: "Provável pressão sobre margem bruta no fechamento atual.", createdAt: daysAgo(2) },
-  { id: "rv_4", kind: "duplicate", severity: "low", title: "Possível lançamento duplicado", description: "Repasse Stone aparece em duas contas com mesmo valor e data.", impact: "Receita pode estar inflada em ~R$ 3.120 se for duplicidade real.", createdAt: daysAgo(3) },
-  { id: "rv_5", kind: "tax-inconsistency", severity: "critical", title: "DAS não conciliado", description: "Pagamento DAS sem vínculo ao mês de competência.", impact: "Risco em apuração tributária. Revisar antes do fechamento.", createdAt: daysAgo(4) },
+  { id: "rv_4", kind: "duplicate", severity: "low", title: "Possível lançamento duplicado", description: "Repasse Stone aparece em duas contas com mesmo valor e data.", impact: "Receita pode estar inflada em ~R$ 3.120 se for duplicidade real.", transactionId: "tx_stone_dup", createdAt: daysAgo(3) },
+  { id: "rv_5", kind: "tax-inconsistency", severity: "critical", title: "DAS não conciliado", description: "Pagamento DAS sem vínculo ao mês de competência.", impact: "Risco em apuração tributária. Revisar antes do fechamento.", transactionId: "tx_das", createdAt: daysAgo(4) },
 ];
 
 // ---- periods ----

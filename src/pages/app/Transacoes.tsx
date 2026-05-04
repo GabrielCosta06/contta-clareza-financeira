@@ -1,7 +1,7 @@
 import type { ComponentProps } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { transactionsRepo, categoriesRepo } from "@/services";
 import { PageHeader } from "@/components/PageHeader";
 import { Button } from "@/components/ui/button";
@@ -29,12 +29,23 @@ const statusLabels: Record<string, { label: string; variant: BadgeVariant }> = {
 
 export default function Transacoes() {
   const { setScenario } = useDemoScenario();
-  const [search, setSearch] = useState("");
-  const [status, setStatus] = useState("all");
-  const [cat, setCat] = useState("all");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [search, setSearch] = useState(searchParams.get("q") ?? "");
+  const [status, setStatus] = useState(searchParams.get("status") ?? "all");
+  const [cat, setCat] = useState(searchParams.get("category") ?? "all");
   const [createOpen, setCreateOpen] = useState(false);
   const [importOpen, setImportOpen] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const next = new URLSearchParams(searchParams);
+    status !== "all" ? next.set("status", status) : next.delete("status");
+    cat !== "all" ? next.set("category", cat) : next.delete("category");
+    search ? next.set("q", search) : next.delete("q");
+    setSearchParams(next, { replace: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status, cat, search]);
+
   const { data = [], isLoading } = useQuery({
     queryKey: ["transactions", search, status, cat],
     queryFn: () => transactionsRepo.list({ search, status, categoryId: cat }),
