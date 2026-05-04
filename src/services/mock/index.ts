@@ -208,6 +208,11 @@ export const reviewRepo: ReviewRepo = {
     if (i >= 0) seedReview.splice(i, 1);
     return delay(undefined);
   },
+  async dismiss(id) {
+    const i = seedReview.findIndex(r => r.id === id);
+    if (i >= 0) seedReview.splice(i, 1);
+    return delay(undefined);
+  },
 };
 
 export const marginRepo: MarginRepo = {
