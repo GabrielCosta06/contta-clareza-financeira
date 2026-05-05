@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import { brl, dateBR } from "@/lib/format";
 import { AIInsightCard } from "@/components/AIInsightCard";
 import { Badge } from "@/components/ui/badge";
-import { InlineAIEntryPoint } from "@/components/InlineAIEntryPoint";
 import { TransactionFormDialog } from "@/components/transactions/TransactionFormDialog";
 import { toast } from "@/components/ui/sonner";
 
@@ -122,8 +121,6 @@ export default function TransacaoDetalhe() {
           askLabel="Perguntar sobre esta transação"
         />
       </div>
-
-      <InlineAIEntryPoint prompt={`Analise a transação "${tx.description}" e diga o que merece atenção nesta tela.`} />
 
       <TransactionFormDialog open={editOpen} onOpenChange={setEditOpen} transaction={tx} />
     </div>
