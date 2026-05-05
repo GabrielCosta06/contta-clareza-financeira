@@ -20,12 +20,16 @@ import { getDemoScenario } from "@/hooks/useDemoScenario";
 const delay = <T,>(v: T, ms = 280) => new Promise<T>(r => setTimeout(() => r(v), ms));
 
 // ---- scenario shaping helpers ----
-const reviewedTransaction = (transaction: Transaction): Transaction => ({
-  ...transaction,
-  categoryId: transaction.categoryId ?? (transaction.direction === "in" ? "cat_rev_balcao" : "cat_fin_taxas"),
-  reviewStatus: "reviewed",
-  evidenceCount: Math.max(1, transaction.evidenceCount),
-});
+// Only "polish" transactions that already had a category — never overwrite
+// user-created or needs-review transactions, so they keep their true status.
+const reviewedTransaction = (transaction: Transaction): Transaction => {
+  if (!transaction.categoryId) return transaction;
+  return {
+    ...transaction,
+    reviewStatus: "reviewed",
+    evidenceCount: Math.max(1, transaction.evidenceCount),
+  };
+};
 
 const scenarioTransactions = (): Transaction[] => {
   const s = getDemoScenario();
@@ -163,6 +167,7 @@ export const transactionsRepo: TransactionsRepo = {
     return delay({ ...tx });
   },
   async create(input) {
+    const needsCategory = !input.categoryId;
     const tx: Transaction = {
       id: `tx_${crypto.randomUUID().slice(0, 8)}`,
       companyId: seedCompany.id,
@@ -174,11 +179,23 @@ export const transactionsRepo: TransactionsRepo = {
       categoryId: input.categoryId,
       accountId: input.accountId || seedAccounts[0]?.id || "acc_itau",
       source: "manual",
-      reviewStatus: input.categoryId ? "reviewed" : "needs-categorization",
+      reviewStatus: needsCategory ? "needs-categorization" : "reviewed",
       evidenceCount: 0,
       notes: input.notes,
     };
     seedTransactions.unshift(tx);
+    if (needsCategory) {
+      seedReview.unshift({
+        id: `rv_${tx.id}`,
+        kind: "uncategorized",
+        severity: "medium",
+        title: `Sem categoria: ${tx.description}`,
+        description: `Lançamento manual de ${tx.direction === "in" ? "entrada" : "saída"} sem categoria definida.`,
+        impact: "Sem categorização, este valor não entra corretamente nos cálculos de margem e DRE.",
+        transactionId: tx.id,
+        createdAt: new Date().toISOString(),
+      });
+    }
     return delay(tx, 350);
   },
   async importFile(file) {
