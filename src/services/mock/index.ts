@@ -39,13 +39,19 @@ const scenarioTransactions = (): Transaction[] => {
   return seedTransactions;
 };
 
+// User-created review items (e.g. from manual transactions) are always shown,
+// regardless of demo scenario, so the user sees the result of their action.
+const userReviewIds = new Set<string>();
+
 const scenarioReview = (): ReviewItem[] => {
   const s = getDemoScenario();
-  if (s === "empty") return [];
-  if (s === "partial") return seedReview.filter(r => r.severity !== "critical").slice(0, 2);
-  if (s === "reliable") return seedReview.filter(r => r.severity === "low").slice(0, 1);
-  if (s === "critical") return seedReview;
-  return seedReview;
+  const userItems = seedReview.filter(r => userReviewIds.has(r.id));
+  let base: ReviewItem[];
+  if (s === "empty") base = [];
+  else if (s === "partial") base = seedReview.filter(r => r.severity !== "critical" && !userReviewIds.has(r.id)).slice(0, 2);
+  else if (s === "reliable") base = seedReview.filter(r => r.severity === "low" && !userReviewIds.has(r.id)).slice(0, 1);
+  else base = seedReview.filter(r => !userReviewIds.has(r.id));
+  return [...userItems, ...base];
 };
 
 const scenarioMargin = (): MarginView | null => {
