@@ -20,12 +20,16 @@ import { getDemoScenario } from "@/hooks/useDemoScenario";
 const delay = <T,>(v: T, ms = 280) => new Promise<T>(r => setTimeout(() => r(v), ms));
 
 // ---- scenario shaping helpers ----
-const reviewedTransaction = (transaction: Transaction): Transaction => ({
-  ...transaction,
-  categoryId: transaction.categoryId ?? (transaction.direction === "in" ? "cat_rev_balcao" : "cat_fin_taxas"),
-  reviewStatus: "reviewed",
-  evidenceCount: Math.max(1, transaction.evidenceCount),
-});
+// Only "polish" transactions that already had a category — never overwrite
+// user-created or needs-review transactions, so they keep their true status.
+const reviewedTransaction = (transaction: Transaction): Transaction => {
+  if (!transaction.categoryId) return transaction;
+  return {
+    ...transaction,
+    reviewStatus: "reviewed",
+    evidenceCount: Math.max(1, transaction.evidenceCount),
+  };
+};
 
 const scenarioTransactions = (): Transaction[] => {
   const s = getDemoScenario();
