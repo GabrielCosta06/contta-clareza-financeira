@@ -1,30 +1,42 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { companyRepo } from "@/services";
+import { categoriesRepo, companyRepo } from "@/services";
 import { useCompanies } from "@/hooks/useCompanies";
 import { PageHeader } from "@/components/PageHeader";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Building2, Link2, Tags, Bell, Lock, LifeBuoy, ChevronRight, Plus } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,
+} from "@/components/ui/dialog";
+import { Building2, Link2, Tags, Bell, Lock, LifeBuoy, ChevronRight, Plus, Mail } from "lucide-react";
 import { dateBR, brl } from "@/lib/format";
+import { toast } from "@/components/ui/sonner";
+
+type DialogKey = null | "categorias" | "alertas" | "privacidade" | "suporte" | "connect";
 
 export default function Configuracoes() {
   const { data: company } = useQuery({ queryKey: ["company"], queryFn: () => companyRepo.current() });
   const { data: accounts = [] } = useQuery({ queryKey: ["accounts"], queryFn: () => companyRepo.accounts() });
+  const { data: cats = [] } = useQuery({ queryKey: ["cats"], queryFn: () => categoriesRepo.list() });
   const { companies, subscription, canAddCompany, estimatedMonthly } = useCompanies();
+  const [open, setOpen] = useState<DialogKey>(null);
 
-  const sections = [
-    { Icon: Tags, t: "Categorias", d: "Estrutura de categorização das transações.", to: undefined },
-    { Icon: Bell, t: "Preferências de alertas", d: "Quando e como ser avisado.", to: undefined },
-    { Icon: Lock, t: "Privacidade", d: "Acessos, papéis e auditoria.", to: undefined },
-    { Icon: LifeBuoy, t: "Suporte", d: "Falar com o time do Contta.", to: undefined },
+  const sections: { key: DialogKey; Icon: typeof Tags; t: string; d: string }[] = [
+    { key: "categorias", Icon: Tags, t: "Categorias", d: "Estrutura de categorização das transações." },
+    { key: "alertas", Icon: Bell, t: "Preferências de alertas", d: "Quando e como ser avisado." },
+    { key: "privacidade", Icon: Lock, t: "Privacidade", d: "Acessos, papéis e auditoria." },
+    { key: "suporte", Icon: LifeBuoy, t: "Suporte", d: "Falar com o time do Contta." },
   ];
 
   return (
     <div className="space-y-6 animate-fade-in">
       <PageHeader title="Configurações" subtitle="Ajustes da empresa, conexões e preferências da sua leitura semanal." />
 
-      {/* Empresas card — links to dedicated management page */}
       <Link
         to="/app/configuracoes/empresas"
         className="group block rounded-lg border border-border bg-card p-5 transition-all hover:border-primary/30 hover:shadow-card"
@@ -86,13 +98,16 @@ export default function Configuracoes() {
               </li>
             ))}
           </ul>
-          <Button size="sm" variant="outline" className="mt-4 w-full">Conectar nova conta</Button>
+          <Button size="sm" variant="outline" className="mt-4 w-full" onClick={() => setOpen("connect")}>
+            Conectar nova conta
+          </Button>
         </div>
 
         {sections.map(s => (
           <button
             type="button"
             key={s.t}
+            onClick={() => setOpen(s.key)}
             className="group rounded-lg border border-border bg-card p-5 text-left transition-all hover:border-primary/30 hover:shadow-card"
           >
             <div className="flex items-center gap-3 mb-2">
@@ -105,6 +120,195 @@ export default function Configuracoes() {
           </button>
         ))}
       </div>
+
+      {/* Categorias */}
+      <Dialog open={open === "categorias"} onOpenChange={(v) => !v && setOpen(null)}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Categorias</DialogTitle>
+            <DialogDescription>Estrutura usada para organizar suas transações em receita, custo, despesa e impostos.</DialogDescription>
+          </DialogHeader>
+          <div className="max-h-[60vh] overflow-y-auto pr-1">
+            <ul className="divide-y divide-border rounded-md border border-border">
+              {cats.map(c => (
+                <li key={c.id} className="flex items-center justify-between gap-3 px-4 py-2.5 text-sm">
+                  <span className="font-medium">{c.name}</span>
+                  <Badge variant="outline" className="text-[10px]">{c.group}</Badge>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <DialogFooter>
+            <p className="text-xs text-muted-foreground mr-auto">Edição personalizada disponível no plano Profissional.</p>
+            <Button variant="outline" onClick={() => setOpen(null)}>Fechar</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Alertas */}
+      <AlertasDialog open={open === "alertas"} onClose={() => setOpen(null)} />
+
+      {/* Privacidade */}
+      <Dialog open={open === "privacidade"} onOpenChange={(v) => !v && setOpen(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Privacidade e acessos</DialogTitle>
+            <DialogDescription>Controle quem acessa os dados desta empresa e veja a auditoria recente.</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 text-sm">
+            <div className="rounded-md border border-border p-3">
+              <p className="font-medium">Membros</p>
+              <p className="mt-1 text-muted-foreground text-xs">Você é o único membro com acesso de proprietário.</p>
+            </div>
+            <div className="rounded-md border border-border p-3">
+              <p className="font-medium">Auditoria</p>
+              <p className="mt-1 text-muted-foreground text-xs">Sem alterações sensíveis nas últimas 24h.</p>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Leia também a <Link to="/privacidade" className="text-primary underline-offset-2 hover:underline">política de privacidade</Link>.
+            </p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setOpen(null)}>Fechar</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Suporte */}
+      <SuporteDialog open={open === "suporte"} onClose={() => setOpen(null)} />
+
+      {/* Conectar nova conta */}
+      <ConnectAccountDialog open={open === "connect"} onClose={() => setOpen(null)} />
     </div>
   );
 }
+
+const AlertasDialog = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
+  const [email, setEmail] = useState(true);
+  const [push, setPush] = useState(false);
+  const [weekly, setWeekly] = useState(true);
+  const [critical, setCritical] = useState(true);
+
+  return (
+    <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Preferências de alertas</DialogTitle>
+          <DialogDescription>Escolha quando e como o Contta deve te avisar.</DialogDescription>
+        </DialogHeader>
+        <div className="space-y-4">
+          {[
+            { l: "Resumo semanal por e-mail", v: weekly, set: setWeekly },
+            { l: "Alertas críticos (caixa, fiscal)", v: critical, set: setCritical },
+            { l: "Notificações por e-mail", v: email, set: setEmail },
+            { l: "Notificações push (em breve)", v: push, set: setPush },
+          ].map((row) => (
+            <div key={row.l} className="flex items-center justify-between gap-3 rounded-md border border-border px-3 py-2.5">
+              <Label className="text-sm font-medium">{row.l}</Label>
+              <Switch checked={row.v} onCheckedChange={row.set} />
+            </div>
+          ))}
+        </div>
+        <DialogFooter>
+          <Button variant="ghost" onClick={onClose}>Cancelar</Button>
+          <Button onClick={() => { toast.success("Preferências salvas."); onClose(); }}>Salvar</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+const SuporteDialog = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
+  const [msg, setMsg] = useState("");
+  return (
+    <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Falar com o suporte</DialogTitle>
+          <DialogDescription>Conte sua dúvida ou problema. Respondemos em até 1 dia útil.</DialogDescription>
+        </DialogHeader>
+        <div className="space-y-3">
+          <a
+            href="mailto:suporte@contta.com.br"
+            className="flex items-center gap-3 rounded-md border border-border px-3 py-2.5 text-sm transition-colors hover:border-primary/40"
+          >
+            <Mail className="h-4 w-4 text-primary" />
+            <span>suporte@contta.com.br</span>
+          </a>
+          <div className="space-y-1.5">
+            <Label htmlFor="sup-msg">Mensagem</Label>
+            <Textarea id="sup-msg" rows={4} value={msg} onChange={(e) => setMsg(e.target.value)} placeholder="Como podemos ajudar?" />
+          </div>
+        </div>
+        <DialogFooter>
+          <Button variant="ghost" onClick={onClose}>Cancelar</Button>
+          <Button
+            disabled={!msg.trim()}
+            onClick={() => { toast.success("Mensagem enviada.", { description: "Em breve nossa equipe responde no seu e-mail." }); setMsg(""); onClose(); }}
+          >
+            Enviar
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+const ConnectAccountDialog = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
+  const [name, setName] = useState("");
+  const [kind, setKind] = useState<"bank" | "csv" | "erp">("bank");
+  const [submitting, setSubmitting] = useState(false);
+
+  const submit = async () => {
+    if (!name.trim()) return;
+    setSubmitting(true);
+    setTimeout(() => {
+      setSubmitting(false);
+      toast.success("Conta enviada para conexão.", { description: "Você receberá uma notificação quando estiver sincronizada." });
+      setName("");
+      onClose();
+    }, 600);
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Conectar nova conta</DialogTitle>
+          <DialogDescription>Banco, maquininha ou planilha. A sincronização inicial pode levar alguns minutos.</DialogDescription>
+        </DialogHeader>
+        <div className="space-y-4">
+          <div className="grid grid-cols-3 gap-2">
+            {([
+              { k: "bank", l: "Banco" },
+              { k: "erp", l: "Maquininha" },
+              { k: "csv", l: "Planilha" },
+            ] as const).map((opt) => (
+              <button
+                key={opt.k}
+                type="button"
+                onClick={() => setKind(opt.k)}
+                className={`rounded-md border px-3 py-2.5 text-sm transition-colors ${kind === opt.k ? "border-primary bg-primary-soft/40 text-primary" : "border-border hover:border-primary/30"}`}
+              >
+                {opt.l}
+              </button>
+            ))}
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="acc-name">Nome da conta</Label>
+            <Input id="acc-name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Ex.: Itaú PJ — matriz" />
+          </div>
+          <p className="text-xs text-muted-foreground">
+            A conexão automática com bancos e maquininhas estará disponível em breve. Por enquanto, registramos sua intenção e nossa equipe ajuda no setup.
+          </p>
+        </div>
+        <DialogFooter>
+          <Button variant="ghost" onClick={onClose} disabled={submitting}>Cancelar</Button>
+          <Button onClick={submit} disabled={submitting || !name.trim()}>
+            {submitting ? "Enviando…" : "Solicitar conexão"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};
