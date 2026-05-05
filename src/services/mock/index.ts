@@ -191,8 +191,9 @@ export const transactionsRepo: TransactionsRepo = {
     };
     seedTransactions.unshift(tx);
     if (needsCategory) {
+      const reviewId = `rv_${tx.id}`;
       seedReview.unshift({
-        id: `rv_${tx.id}`,
+        id: reviewId,
         kind: "uncategorized",
         severity: "medium",
         title: `Sem categoria: ${tx.description}`,
@@ -201,6 +202,7 @@ export const transactionsRepo: TransactionsRepo = {
         transactionId: tx.id,
         createdAt: new Date().toISOString(),
       });
+      userReviewIds.add(reviewId);
     }
     return delay(tx, 350);
   },
