@@ -283,9 +283,31 @@ export function Projecao() {
   );
 }
 
+type ReceivableFilter = "all" | "scheduled" | "overdue" | "received";
+
 export function Recebiveis() {
   const { setScenario } = useDemoScenario();
+  const qc = useQueryClient();
+  const [filter, setFilter] = useState<ReceivableFilter>("all");
   const { data = [], isLoading } = useQuery({ queryKey: ["receivables"], queryFn: () => cashRepo.receivables() });
+
+  const markReceived = useMutation({
+    mutationFn: (id: string) => cashRepo.markReceivableReceived(id),
+    onSuccess: (r) => {
+      toast.success("Recebimento confirmado.", { description: `${r.counterparty} — ${formatBRL(r.amount)}` });
+      qc.invalidateQueries({ queryKey: ["receivables"] });
+      qc.invalidateQueries({ queryKey: ["cash"] });
+      qc.invalidateQueries({ queryKey: ["projection"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const filtered = useMemo(
+    () => (filter === "all" ? data : data.filter((r) => r.status === filter)),
+    [data, filter],
+  );
+  const total = useMemo(() => filtered.reduce((s, r) => s + (r.status === "received" ? 0 : r.amount), 0), [filtered]);
+
   const columns: DataTableColumn<ReceivableExpectation>[] = [
     { key: "counterparty", header: "Contraparte", cell: (row) => <span className="font-medium">{row.counterparty}</span> },
     { key: "due", header: "Vencimento", cell: (row) => <span className="num text-muted-foreground">{dateBR(row.dueDate)}</span> },
@@ -294,28 +316,59 @@ export function Recebiveis() {
       key: "status",
       header: "Status",
       cell: (row) => (
-        <Badge variant={row.status === "overdue" ? "destructive" : "outline"} className="text-[10px]">
-          {row.status === "overdue" ? "Em atraso" : "Agendado"}
+        <Badge variant={row.status === "overdue" ? "destructive" : row.status === "received" ? "secondary" : "outline"} className="text-[10px]">
+          {row.status === "overdue" ? "Em atraso" : row.status === "received" ? "Recebido" : "Agendado"}
         </Badge>
       ),
     },
     { key: "amount", header: "Valor", align: "right", cell: (row) => <span className="num font-medium">{formatBRL(row.amount, { display: "table" })}</span> },
+    {
+      key: "actions",
+      header: "",
+      align: "right",
+      cell: (row) =>
+        row.status === "received" ? (
+          <span className="text-xs text-muted-foreground">—</span>
+        ) : (
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={markReceived.isPending}
+            onClick={() => markReceived.mutate(row.id)}
+          >
+            <Check className="h-3.5 w-3.5" /> Recebi
+          </Button>
+        ),
+    },
   ];
 
   return (
     <div className="space-y-4">
-      <h2 className="font-semibold">Recebíveis esperados</h2>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 className="font-semibold">Recebíveis esperados</h2>
+          <p className="text-xs text-muted-foreground">A receber: <strong className="text-foreground">{formatBRL(total)}</strong></p>
+        </div>
+        <Tabs value={filter} onValueChange={(v) => setFilter(v as ReceivableFilter)}>
+          <TabsList>
+            <TabsTrigger value="all">Todos</TabsTrigger>
+            <TabsTrigger value="scheduled">Agendados</TabsTrigger>
+            <TabsTrigger value="overdue">Em atraso</TabsTrigger>
+            <TabsTrigger value="received">Recebidos</TabsTrigger>
+          </TabsList>
+        </Tabs>
+      </div>
       {isLoading ? (
-        <TableSkeleton rows={5} cols={5} />
+        <TableSkeleton rows={5} cols={6} />
       ) : (
         <DataTable
-          rows={data}
+          rows={filtered}
           columns={columns}
           rowKey={(row) => row.id}
           caption="Recebíveis esperados"
           empty={
             <EmptyState
-              title="Nenhum recebível registrado"
+              title="Nenhum recebível neste filtro"
               description="Quando houver vendas a prazo ou repasses agendados, esta visão mostra o que entra, quando entra e qual fonte sustenta a previsão."
               secondaryAction={
                 <Button type="button" variant="outline" size="sm" onClick={() => setScenario("reliable")}>
@@ -331,9 +384,31 @@ export function Recebiveis() {
   );
 }
 
+type ObligationFilter = "all" | "scheduled" | "overdue" | "paid";
+
 export function Obrigacoes() {
   const { setScenario } = useDemoScenario();
+  const qc = useQueryClient();
+  const [filter, setFilter] = useState<ObligationFilter>("all");
   const { data = [], isLoading } = useQuery({ queryKey: ["obligations"], queryFn: () => cashRepo.obligations() });
+
+  const markPaid = useMutation({
+    mutationFn: (id: string) => cashRepo.markObligationPaid(id),
+    onSuccess: (o) => {
+      toast.success("Pagamento registrado.", { description: `${o.counterparty} — ${formatBRL(o.amount)}` });
+      qc.invalidateQueries({ queryKey: ["obligations"] });
+      qc.invalidateQueries({ queryKey: ["cash"] });
+      qc.invalidateQueries({ queryKey: ["projection"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const filtered = useMemo(
+    () => (filter === "all" ? data : data.filter((o) => o.status === filter)),
+    [data, filter],
+  );
+  const total = useMemo(() => filtered.reduce((s, o) => s + (o.status === "paid" ? 0 : o.amount), 0), [filtered]);
+
   const columns: DataTableColumn<PayableObligation>[] = [
     { key: "counterparty", header: "Contraparte", cell: (row) => <span className="font-medium">{row.counterparty}</span> },
     { key: "due", header: "Vencimento", cell: (row) => <span className="num text-muted-foreground">{dateBR(row.dueDate)}</span> },
@@ -348,22 +423,53 @@ export function Obrigacoes() {
       ),
     },
     { key: "amount", header: "Valor", align: "right", cell: (row) => <span className="num font-medium">{formatBRL(row.amount, { display: "table" })}</span> },
+    {
+      key: "actions",
+      header: "",
+      align: "right",
+      cell: (row) =>
+        row.status === "paid" ? (
+          <Badge variant="secondary" className="text-[10px]">Pago</Badge>
+        ) : (
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={markPaid.isPending}
+            onClick={() => markPaid.mutate(row.id)}
+          >
+            <Check className="h-3.5 w-3.5" /> Paguei
+          </Button>
+        ),
+    },
   ];
 
   return (
     <div className="space-y-4">
-      <h2 className="font-semibold">Obrigações próximas</h2>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 className="font-semibold">Obrigações próximas</h2>
+          <p className="text-xs text-muted-foreground">A pagar: <strong className="text-foreground">{formatBRL(total)}</strong></p>
+        </div>
+        <Tabs value={filter} onValueChange={(v) => setFilter(v as ObligationFilter)}>
+          <TabsList>
+            <TabsTrigger value="all">Todos</TabsTrigger>
+            <TabsTrigger value="scheduled">Agendados</TabsTrigger>
+            <TabsTrigger value="overdue">Em atraso</TabsTrigger>
+            <TabsTrigger value="paid">Pagos</TabsTrigger>
+          </TabsList>
+        </Tabs>
+      </div>
       {isLoading ? (
-        <TableSkeleton rows={5} cols={5} />
+        <TableSkeleton rows={5} cols={6} />
       ) : (
         <DataTable
-          rows={data}
+          rows={filtered}
           columns={columns}
           rowKey={(row) => row.id}
           caption="Obrigações próximas"
           empty={
             <EmptyState
-              title="Nenhuma obrigação registrada"
+              title="Nenhuma obrigação neste filtro"
               description="Cadastre boletos, folha e impostos para acompanhar saídas previstas, severidade e data de aperto no caixa."
               secondaryAction={
                 <Button type="button" variant="outline" size="sm" onClick={() => setScenario("reliable")}>
