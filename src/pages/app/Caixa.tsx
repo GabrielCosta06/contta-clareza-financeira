@@ -118,6 +118,8 @@ export default function Caixa() {
   }
 
   const risk = riskLabels[cash.riskLevel];
+  const delta30 = cash.projected30d - cash.currentBalance;
+  const deltaPct = cash.currentBalance > 0 ? Math.round((delta30 / cash.currentBalance) * 100) : 0;
 
   return (
     <div className="space-y-6">
@@ -132,8 +134,8 @@ export default function Caixa() {
         <StatCard
           label="Saldo projetado em 30d"
           value={formatBRL(cash.projected30d, { display: "card", compactViewport: compactCurrency })}
-          emphasis="warning"
-          delta={{ value: -32 }}
+          emphasis={delta30 < 0 ? "warning" : "default"}
+          delta={{ value: deltaPct, vs: "vs hoje" }}
         />
         <StatCard
           label="Risco de curto prazo"
@@ -145,17 +147,24 @@ export default function Caixa() {
 
       <div className="grid gap-4 lg:grid-cols-3">
         <div className="lg:col-span-2 rounded-lg border border-border bg-card p-5">
-          <div className="mb-4">
+          <div className="mb-4 flex items-center justify-between gap-3">
             <h2 className="font-semibold">Projeção de 30 dias</h2>
+            <Button asChild variant="ghost" size="sm">
+              <Link to="/app/caixa/projecao">Detalhar</Link>
+            </Button>
           </div>
           <ProjectionChart />
         </div>
         <AIInsightCard
-          summary="Sem ação, o caixa pode ficar negativo em ~19 dias devido à concentração de obrigações entre dias 7 e 14."
+          summary={
+            cash.riskLevel === "ok"
+              ? "Caixa saudável nos próximos 30 dias. Espaço para antecipar pagamentos ou investir em estoque."
+              : "Sem ação, o caixa pode apertar nos próximos 30 dias devido à concentração de obrigações."
+          }
           details={[
-            "Cobrar Restaurante Lume (R$ 4.280, em atraso).",
-            "Antecipar repasse Stone (R$ 18,4 mil) reduz o aperto.",
-            "Postergar compra de equipamento não essencial preserva liquidez.",
+            "Cobrar recebíveis em atraso reduz o aperto.",
+            "Antecipar repasses de maquininha pode liberar liquidez.",
+            "Postergar compras não essenciais preserva caixa.",
           ]}
         />
       </div>
@@ -171,8 +180,6 @@ export default function Caixa() {
           <Link to="/app/caixa/obrigacoes">Obrigações</Link>
         </Button>
       </div>
-
-      <InlineAIEntryPoint prompt="Qual decisão protege melhor o caixa observando esta tela?" />
     </div>
   );
 }
