@@ -21,7 +21,7 @@ import { PageHeader } from "@/components/PageHeader";
 import { StatCard } from "@/components/StatCard";
 import { DataTrustBanner } from "@/components/DataTrustBanner";
 import { AIInsightCard } from "@/components/AIInsightCard";
-import { InlineAIEntryPoint } from "@/components/InlineAIEntryPoint";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
