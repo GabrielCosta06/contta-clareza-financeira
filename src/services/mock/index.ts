@@ -261,6 +261,20 @@ export const cashRepo: CashRepo = {
   async projection() { return delay(scenarioProjection()); },
   async receivables() { return delay(scenarioReceivables()); },
   async obligations() { return delay(scenarioObligations()); },
+  async markReceivableReceived(id) {
+    const r = seedReceivables.find(r => r.id === id);
+    if (!r) throw new Error("Recebível não encontrado");
+    r.status = "received";
+    seedCash.currentBalance += r.amount;
+    return delay({ ...r }, 250);
+  },
+  async markObligationPaid(id) {
+    const o = seedObligations.find(o => o.id === id);
+    if (!o) throw new Error("Obrigação não encontrada");
+    o.status = "paid";
+    seedCash.currentBalance -= o.amount;
+    return delay({ ...o }, 250);
+  },
 };
 
 export const alertsRepo: AlertsRepo = {

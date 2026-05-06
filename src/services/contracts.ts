@@ -58,6 +58,8 @@ export interface CashRepo {
   projection(): Promise<CashProjectionPoint[]>;
   receivables(): Promise<ReceivableExpectation[]>;
   obligations(): Promise<PayableObligation[]>;
+  markReceivableReceived(id: string): Promise<ReceivableExpectation>;
+  markObligationPaid(id: string): Promise<PayableObligation>;
 }
 
 export interface AlertsRepo {
