@@ -48,9 +48,10 @@ export interface ReviewRepo {
 export interface MarginRepo {
   overview(periodId?: string): Promise<MarginView>;
   dre(periodId?: string): Promise<DREView>;
-  costs(): Promise<CostBreakdownItem[]>;
-  budget(): Promise<BudgetLine[]>;
+  costs(periodId?: string): Promise<CostBreakdownItem[]>;
+  budget(periodId?: string): Promise<BudgetLine[]>;
   pricing(): Promise<PricingInsight[]>;
+  updateBudget(category: string, planned: number): Promise<BudgetLine>;
 }
 
 export interface CashRepo {

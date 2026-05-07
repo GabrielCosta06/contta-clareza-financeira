@@ -240,16 +240,79 @@ export const reviewRepo: ReviewRepo = {
   },
 };
 
+// Period multipliers — applied on top of scenario data so the period selector feels alive.
+const periodFactor = (periodId?: string) => {
+  if (periodId === "p_prev") return { rev: 0.96, cost: 0.88, marginDeltaPct: 2.6, label: "Mês anterior" };
+  if (periodId === "p_q") return { rev: 2.85, cost: 2.7, marginDeltaPct: -1.4, label: "Trimestre" };
+  return { rev: 1, cost: 1, marginDeltaPct: 0, label: "Mês atual" };
+};
+
 export const marginRepo: MarginRepo = {
-  async overview() {
+  async overview(periodId) {
     const m = scenarioMargin();
     if (!m) throw new Error("EMPTY_MARGIN");
-    return delay(m);
+    const f = periodFactor(periodId);
+    const rev = Math.round(m.revenue * f.rev);
+    const cogs = Math.round(m.cogs * f.cost);
+    const grossMargin = rev - cogs;
+    const grossPct = rev > 0 ? +(grossMargin / rev * 100).toFixed(1) : 0;
+    const cm = Math.round(m.contributionMargin * f.rev);
+    const cmPct = rev > 0 ? +(cm / rev * 100).toFixed(1) : 0;
+    return delay({
+      ...m,
+      period: { ...m.period, id: periodId ?? m.period.id, label: f.label },
+      revenue: rev,
+      cogs,
+      grossMargin,
+      grossMarginPct: grossPct,
+      contributionMargin: cm,
+      contributionMarginPct: cmPct,
+      delta: { ...m.delta, pct: +(m.delta.pct + f.marginDeltaPct).toFixed(1) },
+      series: m.series.map((s, i) => ({
+        ...s,
+        revenue: Math.round(s.revenue * f.rev * (periodId === "p_q" ? 0.45 : 1)),
+        cost: Math.round(s.cost * f.cost * (periodId === "p_q" ? 0.45 : 1)),
+      })),
+    });
   },
-  async dre() { return delay(seedDRE); },
-  async costs() { return delay(getDemoScenario() === "empty" ? [] : seedCosts); },
-  async budget() { return delay(getDemoScenario() === "empty" ? [] : seedBudget); },
+  async dre(periodId) {
+    const f = periodFactor(periodId);
+    return delay({
+      ...seedDRE,
+      period: { ...seedDRE.period, id: periodId ?? seedDRE.period.id, label: f.label },
+      lines: seedDRE.lines.map(l => ({
+        ...l,
+        value: Math.round(l.value * (l.value < 0 ? f.cost : f.rev)),
+      })),
+    });
+  },
+  async costs(periodId) {
+    if (getDemoScenario() === "empty") return delay([]);
+    const f = periodFactor(periodId);
+    return delay(seedCosts.map(c => ({
+      ...c,
+      current: Math.round(c.current * f.cost),
+      previous: Math.round(c.previous * f.cost * 0.95),
+    })));
+  },
+  async budget(periodId) {
+    if (getDemoScenario() === "empty") return delay([]);
+    const f = periodFactor(periodId);
+    return delay(seedBudget.map(b => {
+      const planned = Math.round(b.planned * (b.category === "Receita" || b.category === "Resultado" ? f.rev : f.cost));
+      const actual = Math.round(b.actual * (b.category === "Receita" || b.category === "Resultado" ? f.rev : f.cost));
+      const variancePct = planned > 0 ? +(((actual - planned) / planned) * 100).toFixed(1) : 0;
+      return { ...b, planned, actual, variancePct };
+    }));
+  },
   async pricing() { return delay(getDemoScenario() === "empty" ? [] : seedPricing); },
+  async updateBudget(category, planned) {
+    const b = seedBudget.find(x => x.category === category);
+    if (!b) throw new Error("Categoria não encontrada");
+    b.planned = planned;
+    b.variancePct = planned > 0 ? +(((b.actual - planned) / planned) * 100).toFixed(1) : 0;
+    return delay({ ...b }, 200);
+  },
 };
 
 export const cashRepo: CashRepo = {
