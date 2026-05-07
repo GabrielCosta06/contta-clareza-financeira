@@ -6,13 +6,14 @@ import { FlaskConical, TrendingUp } from "lucide-react";
 
 import { marginRepo } from "@/services";
 import { useDemoScenario } from "@/hooks/useDemoScenario";
+import { MarginPeriodProvider, useMarginPeriod, PERIOD_OPTIONS } from "@/hooks/useMarginPeriod";
 import { PageHeader } from "@/components/PageHeader";
 import { StatCard } from "@/components/StatCard";
 import { DataTrustBanner } from "@/components/DataTrustBanner";
 import { AIInsightCard } from "@/components/AIInsightCard";
-import { InlineAIEntryPoint } from "@/components/InlineAIEntryPoint";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { StatCardSkeletonGrid } from "@/components/skeletons/StatCardSkeleton";
 import { ChartSkeleton } from "@/components/skeletons/ChartSkeleton";
 import { EmptyState } from "@/components/EmptyState";
@@ -26,7 +27,21 @@ const subnav = [
   { to: "/app/margem/precificacao", label: "Preços", value: "pricing" },
 ];
 
-export const MargemLayout = () => {
+const PeriodSelect = () => {
+  const { periodId, setPeriodId } = useMarginPeriod();
+  return (
+    <Select value={periodId} onValueChange={(v) => setPeriodId(v as typeof periodId)}>
+      <SelectTrigger className="h-9 w-[160px]"><SelectValue /></SelectTrigger>
+      <SelectContent>
+        {PERIOD_OPTIONS.map((p) => (
+          <SelectItem key={p.id} value={p.id}>{p.label}</SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
+};
+
+const MargemLayoutInner = () => {
   const loc = useLocation();
   const navigate = useNavigate();
   const activeValue = useMemo(() => {
@@ -38,9 +53,15 @@ export const MargemLayout = () => {
     return "overview";
   }, [loc.pathname]);
 
+  const showPeriod = activeValue !== "pricing";
+
   return (
     <div className="space-y-6 animate-fade-in">
-      <PageHeader title="Margem" subtitle="Veja onde sua margem está melhorando — e onde está caindo." />
+      <PageHeader
+        title="Margem"
+        subtitle="Veja onde sua margem está melhorando — e onde está caindo."
+        actions={showPeriod ? <PeriodSelect /> : undefined}
+      />
       <Tabs value={activeValue} onValueChange={(value) => navigate(subnav.find((item) => item.value === value)?.to ?? "/app/margem")}>
         <div className="overflow-x-auto">
           <TabsList className="h-auto w-full min-w-max justify-start gap-1 rounded-lg bg-muted/50 p-1">
@@ -57,19 +78,28 @@ export const MargemLayout = () => {
   );
 };
 
+export const MargemLayout = () => (
+  <MarginPeriodProvider>
+    <MargemLayoutInner />
+  </MarginPeriodProvider>
+);
+
 export default function Margem() {
   const { setScenario } = useDemoScenario();
+  const { periodId } = useMarginPeriod();
   const compactCurrency = useCompactCurrency();
-  const { data: margin, isLoading, isError } = useQuery({ queryKey: ["margin"], queryFn: () => marginRepo.overview(), retry: false });
+  const { data: margin, isLoading, isError } = useQuery({
+    queryKey: ["margin", periodId],
+    queryFn: () => marginRepo.overview(periodId),
+    retry: false,
+  });
 
   if (isLoading) {
     return (
       <div className="space-y-6">
         <StatCardSkeletonGrid count={3} />
         <div className="grid gap-4 lg:grid-cols-3">
-          <div className="lg:col-span-2">
-            <ChartSkeleton />
-          </div>
+          <div className="lg:col-span-2"><ChartSkeleton /></div>
           <ChartSkeleton height="h-48" />
         </div>
       </div>
@@ -125,12 +155,12 @@ export default function Margem() {
       <div className="grid gap-4 lg:grid-cols-3">
         <div className="lg:col-span-2 rounded-lg border border-border bg-card p-5">
           <div className="mb-4">
-            <h2 className="font-semibold">Receita vs. custo — últimas 8 semanas</h2>
+            <h2 className="font-semibold">Receita vs. custo — {margin.period.label.toLowerCase()}</h2>
           </div>
           <div className="h-72 -ml-2" role="img" aria-labelledby="margin-chart-title" aria-describedby="margin-chart-description">
-            <p id="margin-chart-title" className="sr-only">Gráfico de receita e custo das últimas oito semanas</p>
+            <p id="margin-chart-title" className="sr-only">Gráfico de receita e custo</p>
             <p id="margin-chart-description" className="sr-only">
-              Comparação semanal entre receita e custo para ajudar a identificar onde a margem está sendo pressionada.
+              Comparação entre receita e custo para ajudar a identificar onde a margem está sendo pressionada.
             </p>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={margin.series}>
@@ -187,8 +217,6 @@ export default function Margem() {
           <Link to="/app/margem/precificacao">Ajustar preços</Link>
         </Button>
       </div>
-
-      <InlineAIEntryPoint prompt="Quais decisões sobre margem merecem atenção nesta tela?" />
     </div>
   );
 }
